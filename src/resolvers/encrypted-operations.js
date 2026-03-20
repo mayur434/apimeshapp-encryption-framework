@@ -209,46 +209,74 @@ function shouldEncryptResponse(registration, input) {
 async function resolveEncryptedOperation(fieldName, args, context) {
   var resolveStart = Date.now();
   console.log('[encrypted-ops] resolve_start field=' + fieldName);
-  const registration = getRegistryByWrapperField(fieldName);
-  if (!registration) {
-    throw new Error('No encrypted registration found for field: ' + fieldName);
+
+  try {
+    const registration = getRegistryByWrapperField(fieldName);
+    if (!registration) {
+      console.error('[encrypted-ops] error field=' + fieldName + ' reason=no_registration');
+      throw new Error('The requested operation is not available.');
+    }
+
+    const passPhrase = DEFAULT_PASS_PHRASE;
+
+    // Endpoint and allowed hosts come from the registry entry — each source is self-contained.
+    const endpoint = registration.source && registration.source.endpoint;
+    const allowedHosts = registration.source && registration.source.allowedHosts;
+    if (!endpoint) {
+      console.error('[encrypted-ops] error field=' + fieldName + ' reason=no_endpoint');
+      throw new Error('The requested operation is not available.');
+    }
+
+    const input = (args && args.input) || {};
+
+    var wrapperPayload;
+    try {
+      wrapperPayload = await parseWrapperPayload(input, passPhrase);
+    } catch (decryptErr) {
+      console.error('[encrypted-ops] error field=' + fieldName + ' stage=decrypt reason=' + decryptErr.message);
+      throw new Error('Failed to process the encrypted request. Please verify the payload and try again.');
+    }
+
+    var sourceResult;
+    try {
+      // query and variables come from the client payload — no hardcoded document.
+      sourceResult = await executeSourceGraphQL({
+        endpoint,
+        allowedHosts,
+        document: wrapperPayload.query,
+        variables: wrapperPayload.variables || {},
+        fetchImpl: (context && context.fetch) || (typeof globalThis !== 'undefined' && globalThis.fetch) || (typeof global !== 'undefined' && global.fetch)
+      });
+    } catch (upstreamErr) {
+      console.error('[encrypted-ops] error field=' + fieldName + ' stage=upstream reason=' + upstreamErr.message);
+      throw new Error('The upstream service is currently unavailable. Please try again later.');
+    }
+
+    // Return the full upstream response — client controls the query so they know the shape.
+    const responsePayload = JSON.stringify(sourceResult.json);
+    const encryptResponse = shouldEncryptResponse(registration, input);
+    var encryptStart = Date.now();
+    var encryptedPayload;
+    try {
+      encryptedPayload = encryptResponse ? await encryptText(responsePayload, passPhrase) : responsePayload;
+    } catch (encryptErr) {
+      console.error('[encrypted-ops] error field=' + fieldName + ' stage=response_encrypt reason=' + encryptErr.message);
+      throw new Error('Failed to process the response. Please try again later.');
+    }
+    var encryptDuration = Date.now() - encryptStart;
+    var totalDuration = Date.now() - resolveStart;
+    console.log('[encrypted-ops] response_encrypt encrypted=' + encryptResponse + ' payload_size=' + responsePayload.length + ' duration=' + encryptDuration + 'ms');
+    console.log('[encrypted-ops] resolve_end field=' + fieldName + ' upstream_status=' + sourceResult.status + ' response_encrypted=' + encryptResponse + ' total_duration=' + totalDuration + 'ms' + (sourceResult.json.errors ? ' has_errors=true' : ''));
+    return {
+      encrypted: encryptResponse,
+      operationName: fieldName,
+      payload: encryptedPayload
+    };
+  } catch (err) {
+    var totalDuration = Date.now() - resolveStart;
+    console.error('[encrypted-ops] resolve_failed field=' + fieldName + ' total_duration=' + totalDuration + 'ms error=' + err.message);
+    throw err;
   }
-
-  const passPhrase = DEFAULT_PASS_PHRASE;
-
-  // Endpoint and allowed hosts come from the registry entry — each source is self-contained.
-  const endpoint = registration.source && registration.source.endpoint;
-  const allowedHosts = registration.source && registration.source.allowedHosts;
-  if (!endpoint) {
-    throw new Error('No source endpoint configured for field: ' + fieldName);
-  }
-
-  const input = (args && args.input) || {};
-  const wrapperPayload = await parseWrapperPayload(input, passPhrase);
-
-  // query and variables come from the client payload — no hardcoded document.
-  const sourceResult = await executeSourceGraphQL({
-    endpoint,
-    allowedHosts,
-    document: wrapperPayload.query,
-    variables: wrapperPayload.variables || {},
-    fetchImpl: (context && context.fetch) || (typeof globalThis !== 'undefined' && globalThis.fetch) || (typeof global !== 'undefined' && global.fetch)
-  });
-
-  // Return the full upstream response — client controls the query so they know the shape.
-  const responsePayload = JSON.stringify(sourceResult.json);
-  const encryptResponse = shouldEncryptResponse(registration, input);
-  var encryptStart = Date.now();
-  const encryptedPayload = encryptResponse ? await encryptText(responsePayload, passPhrase) : responsePayload;
-  var encryptDuration = Date.now() - encryptStart;
-  var totalDuration = Date.now() - resolveStart;
-  console.log('[encrypted-ops] response_encrypt encrypted=' + encryptResponse + ' payload_size=' + responsePayload.length + ' duration=' + encryptDuration + 'ms');
-  console.log('[encrypted-ops] resolve_end field=' + fieldName + ' upstream_status=' + sourceResult.status + ' response_encrypted=' + encryptResponse + ' total_duration=' + totalDuration + 'ms' + (sourceResult.json.errors ? ' has_errors=true' : ''));
-  return {
-    encrypted: encryptResponse,
-    operationName: fieldName,
-    payload: encryptedPayload
-  };
 }
 
 function buildTypeResolvers(typeName) {

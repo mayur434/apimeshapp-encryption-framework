@@ -73,20 +73,29 @@ if (mesh) {
     }
   });
 
-  // Check that referenced hook/resolver files exist
+  // Check that referenced hook/resolver files exist.
+  // After build, paths point to mesh-artifact/; before build, check the source files too.
+  function assertFileOrSource(filePath) {
+    const fullPath = path.join(ROOT, filePath.replace(/^\.\//, ''));
+    if (fs.existsSync(fullPath)) return;
+    // Fall back to the source file (mesh-artifact/src/... → src/...)
+    const sourcePath = filePath.replace('mesh-artifact/', '');
+    const sourceFullPath = path.join(ROOT, sourcePath.replace(/^\.\//, ''));
+    if (fs.existsSync(sourceFullPath)) return;
+    throw new Error(`File not found: ${filePath}`);
+  }
+
   const hookComposer = ((mesh.meshConfig.plugins || []).find(p => p.hooks) || {}).hooks;
   if (hookComposer && hookComposer.beforeAll && hookComposer.beforeAll.composer) {
     const hookFile = hookComposer.beforeAll.composer.split('#')[0];
     check(`hook file exists: ${hookFile}`, () => {
-      const fullPath = path.join(ROOT, hookFile.replace(/^\.\//, ''));
-      if (!fs.existsSync(fullPath)) throw new Error(`File not found: ${hookFile}`);
+      assertFileOrSource(hookFile);
     });
   }
 
   for (const resolverPath of mesh.meshConfig.additionalResolvers || []) {
     check(`resolver file exists: ${resolverPath}`, () => {
-      const fullPath = path.join(ROOT, resolverPath.replace(/^\.\//, ''));
-      if (!fs.existsSync(fullPath)) throw new Error(`File not found: ${resolverPath}`);
+      assertFileOrSource(resolverPath);
     });
   }
 }

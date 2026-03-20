@@ -56,46 +56,52 @@ function getInput(payload) {
 }
 
 function beforeAll(payload) {
-  const fieldName = extractPrimaryFieldName(payload);
-  const registration = fieldName ? getRegistryByWrapperField(fieldName) : null;
+  try {
+    const fieldName = extractPrimaryFieldName(payload);
+    const registration = fieldName ? getRegistryByWrapperField(fieldName) : null;
 
-  if (!registration) {
-    return { status: 'SUCCESS', message: 'Request is not using an encrypted wrapper field.' };
-  }
+    if (!registration) {
+      return { status: 'SUCCESS', message: 'Request is not using an encrypted wrapper field.' };
+    }
 
-  const input = getInput(payload);
-  if (!input || typeof input !== 'object') {
-    return { status: 'ERROR', message: 'Missing input for wrapper field ' + fieldName + '.' };
-  }
+    const input = getInput(payload);
+    if (!input || typeof input !== 'object') {
+      return { status: 'ERROR', message: 'Missing input for the requested operation.' };
+    }
 
-  if (typeof input.payload !== 'string' || !input.payload.trim()) {
-    return { status: 'ERROR', message: 'Missing payload for wrapper field ' + fieldName + '.' };
-  }
+    if (typeof input.payload !== 'string' || !input.payload.trim()) {
+      return { status: 'ERROR', message: 'Missing payload for the requested operation.' };
+    }
 
-  if (registration.requestMode === 'encrypted-only' && !input.encrypted) {
-    return { status: 'ERROR', message: 'Wrapper field ' + fieldName + ' requires encrypted=true.' };
-  }
+    if (registration.requestMode === 'encrypted-only' && !input.encrypted) {
+      return { status: 'ERROR', message: 'This operation requires an encrypted request.' };
+    }
 
-  if (!input.encrypted) {
+    if (!input.encrypted) {
+      try {
+        JSON.parse(input.payload);
+        return {
+          status: 'SUCCESS',
+          message: 'Plain wrapper request validated. Response policy is ' + (registration.responseEncryption || 'mirror-request') + '.'
+        };
+      } catch (_error) {
+        return { status: 'ERROR', message: 'The provided payload is not valid JSON.' };
+      }
+    }
+
     try {
-      JSON.parse(input.payload);
+      decodeEnvelope(input.payload);
       return {
         status: 'SUCCESS',
-        message: 'Plain wrapper request validated for ' + fieldName + '. Response policy is ' + (registration.responseEncryption || 'mirror-request') + '.'
+        message: 'Encrypted request validated. Response policy is ' + (registration.responseEncryption || 'mirror-request') + '.'
       };
-    } catch (_error) {
-      return { status: 'ERROR', message: 'Plain wrapper payload is not valid JSON for ' + fieldName + '.' };
+    } catch (envelopeErr) {
+      console.error('[before-all] envelope_validation_failed error=' + envelopeErr.message);
+      return { status: 'ERROR', message: 'The encrypted payload format is invalid.' };
     }
-  }
-
-  try {
-    decodeEnvelope(input.payload);
-    return {
-      status: 'SUCCESS',
-      message: 'Encrypted wrapper request detected and envelope validated for ' + fieldName + '. Response policy is ' + (registration.responseEncryption || 'mirror-request') + '.'
-    };
-  } catch (error) {
-    return { status: 'ERROR', message: 'Invalid encrypted payload for ' + fieldName + ': ' + error.message };
+  } catch (err) {
+    console.error('[before-all] unexpected_error error=' + err.message);
+    return { status: 'ERROR', message: 'Request validation failed. Please try again later.' };
   }
 }
 

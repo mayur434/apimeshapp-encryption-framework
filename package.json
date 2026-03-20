@@ -2,7 +2,7 @@
   "name": "api-mesh-encryption-modular",
   "private": true,
   "version": "1.0.0",
-  "description": "dependency-free modular encryption wrappers for adobe api mesh",
+  "description": "Zero-dependency encrypted operations framework for Adobe API Mesh — AES-CBC encrypted request/response envelopes for any GraphQL source",
   "scripts": {
     "build:mesh": "node ./scripts/build-mesh.js",
     "start:mesh": "aio api-mesh run mesh/mesh.json --secrets mesh/stage-secrets.yaml",

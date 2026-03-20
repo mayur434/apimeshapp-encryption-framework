@@ -1,8 +1,8 @@
-# API Mesh Encryption Framework
+# Adobe API Mesh — Encrypted Operations Framework
 
-A zero-dependency, source-agnostic encryption framework for Adobe API Mesh. Wraps any upstream GraphQL operation (Commerce, OMS, CMS, or third-party) behind AES-CBC encrypted request/response envelopes.
+Zero-dependency, source-agnostic encryption layer for Adobe API Mesh. Wraps upstream GraphQL operations (Commerce, OMS, CMS, or any third-party API) behind AES-CBC encrypted request/response envelopes — protecting sensitive data in transit between the client and the mesh.
 
-## What it solves
+## Overview
 
 - Wraps sensitive GraphQL mutations/queries behind encrypted wrapper fields.
 - Client sends the full GraphQL query + variables inside an encrypted (or plain) payload.
@@ -50,6 +50,8 @@ Upstream GraphQL Source (Commerce, OMS, etc.)
 | IV              | Random 16 bytes      |
 | Salt            | Random 16 bytes      |
 
+> **Customizable:** The encryption algorithm, key size, iteration count, and other parameters can be modified based on your security requirements. Update the constants in `src/resolvers/encrypted-operations.js` and `scripts/crypto-envelope.js`, then rebuild with `npm run build:mesh`.
+
 ### Envelope format
 
 ```
@@ -95,9 +97,10 @@ Example decoded envelope:
 │   ├── encrypt-value.js                # CLI: encrypt a plaintext value
 │   ├── decrypt-value.js                # CLI: decrypt an envelope
 │   ├── encrypt-payload.js              # CLI: build & encrypt a GraphQL payload
+│   ├── decrypt-response.js             # CLI: decrypt an encrypted mesh response
 │   ├── validate-mesh.js                # Validate mesh config and secrets
 │   └── validate-workflows.js           # Validate GitHub Actions workflows
-├── mesh-artifact/                      # Mesh artifact storage
+├── mesh-artifact/                      # Built files with resolved secrets (gitignored)
 ├── meshes/                             # Mesh definitions
 ├── tempfiles/                          # Temporary files
 ├── .eslintrc.json                      # ESLint configuration
@@ -152,16 +155,17 @@ aio api-mesh update mesh/mesh.json
 
 ## npm scripts
 
-| Script              | Command                                              | Description                              |
-|---------------------|------------------------------------------------------|------------------------------------------|
-| `build:mesh`        | `npm run build:mesh`                                 | Build `mesh/mesh.json`                   |
-| `start:mesh`        | `npm run start:mesh`                                 | Run mesh locally with `aio api-mesh run` |
-| `encrypt`           | `npm run encrypt -- "text"`                          | Encrypt a plaintext string               |
-| `decrypt`           | `npm run decrypt -- "envelope"`                      | Decrypt an encrypted envelope            |
-| `encrypt:payload`   | `npm run encrypt:payload -- "query" '{"vars":{}}'`   | Build & encrypt a GraphQL payload        |
-| `validate`          | `npm run validate`                                   | Validate mesh config and secrets files   |
-| `validate:workflows`| `npm run validate:workflows`                         | Validate GitHub Actions workflows        |
-| `test`              | `npm test`                                           | Run mesh config tests                    |
+| Script              | Command                                              | Description                                |
+|---------------------|------------------------------------------------------|--------------------------------------------|
+| `build:mesh`        | `npm run build:mesh`                                 | Build `mesh/mesh.json` from template       |
+| `start:mesh`        | `npm run start:mesh`                                 | Run mesh locally with `aio api-mesh run`   |
+| `encrypt`           | `npm run encrypt -- "text"`                          | Encrypt a plaintext string                 |
+| `decrypt`           | `npm run decrypt -- "envelope"`                      | Decrypt an encrypted envelope              |
+| `encrypt:payload`   | `npm run encrypt:payload -- "query" '{"vars":{}}'`   | Build & encrypt a GraphQL payload          |
+| `decrypt:response`  | `npm run decrypt:response -- "envelope-or-json"`     | Decrypt an encrypted mesh response         |
+| `validate`          | `npm run validate`                                   | Validate mesh config and secrets files     |
+| `validate:workflows`| `npm run validate:workflows`                         | Validate GitHub Actions workflows          |
+| `test`              | `npm test`                                           | Run mesh config tests                      |
 
 ## CLI tools
 
@@ -188,6 +192,15 @@ npm run encrypt:payload -- \
 ```
 
 The output is a Base64 envelope ready to use as `input.payload` in a wrapper mutation.
+
+### Decrypt a mesh response
+
+```bash
+# Pass a raw encrypted envelope
+npm run decrypt:response -- "MTI4OjoxMDAwMDo6..."
+
+# Or pass the full JSON response from the mesh
+npm run decrypt:response -- '{"data":{"encryptedCreateCustomer":{"encrypted":true,"payload":"MTI4..."}}}'
 
 ## Adding a new encrypted operation
 
@@ -232,3 +245,17 @@ Defined in `mesh/prod-secrets.yaml` and `mesh/stage-secrets.yaml`:
 4. `scripts/build-mesh.js` reads the embedded template, interpolates `{{PLACEHOLDER}}` tokens in both the config and embedded file contents, injects `additionalTypeDefs`, and writes `mesh/mesh.json`.
 
 The built artifact is fully self-contained — no runtime env access needed. All secrets and endpoints are baked in at build time.
+
+## Production logging
+
+The resolver emits structured, production-safe logs at each stage of the request lifecycle. No sensitive data (payloads, queries, variables, credentials) is ever logged.
+
+```
+[encrypted-ops] resolve_start field=encryptedCreateCustomer
+[encrypted-ops] request_decrypt encrypted=true payload_size=312 duration=45ms
+[encrypted-ops] upstream_call status=200 ok=true duration=230ms
+[encrypted-ops] response_encrypt encrypted=true payload_size=186 duration=12ms
+[encrypted-ops] resolve_end field=encryptedCreateCustomer upstream_status=200 response_encrypted=true total_duration=290ms
+```
+
+Each log line captures: operation field, encryption flags, payload sizes, timing, upstream HTTP status, and error presence.

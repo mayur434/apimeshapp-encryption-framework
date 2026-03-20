@@ -1,0 +1,58 @@
+name: Deploy to Stage
+
+on:
+  push:
+    branches: [stage, develop]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Validate mesh config
+        run: node scripts/validate-mesh.js
+
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: stage
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Install AIO CLI
+        run: npm install -g @adobe/aio-cli
+
+      - name: Configure AIO credentials
+        env:
+          AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH_STAGE }}
+          AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE_STAGE }}
+        run: |
+          aio config:set ims.contexts.cli.access_token "${{ secrets.AIO_ACCESS_TOKEN_STAGE }}" --json
+
+      - name: Build mesh
+        run: npm run build:mesh
+        env:
+          MESH_AES_PASSPHRASE: ${{ secrets.MESH_AES_PASSPHRASE_STAGE }}
+          COMMERCE_GRAPHQL_ENDPOINT: ${{ secrets.COMMERCE_GRAPHQL_ENDPOINT_STAGE }}
+          ALLOWED_COMMERCE_HOSTS: ${{ secrets.ALLOWED_COMMERCE_HOSTS_STAGE }}
+
+      - name: Deploy mesh
+        run: aio api-mesh update mesh/mesh.json

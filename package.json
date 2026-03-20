@@ -1,0 +1,23 @@
+{
+  "name": "api-mesh-encryption-modular",
+  "private": true,
+  "version": "1.0.0",
+  "description": "dependency-free modular encryption wrappers for adobe api mesh",
+  "scripts": {
+    "build:mesh": "node ./scripts/build-mesh.js",
+    "start:mesh": "aio api-mesh run mesh/mesh.json --secrets mesh/stage-secrets.yaml",
+    "encrypt": "node ./scripts/encrypt-value.js",
+    "encrypt:payload": "node ./scripts/encrypt-payload.js",
+    "decrypt": "node ./scripts/decrypt-value.js",
+    "decrypt:response": "node ./scripts/decrypt-response.js",
+    "validate": "node ./scripts/validate-mesh.js",
+    "validate:workflows": "node ./scripts/validate-workflows.js",
+    "test": "node ./__tests__/mesh-config.test.js"
+  },
+  "dependencies": {
+    "graphql-import-node": "^0.0.5"
+  },
+  "devDependencies": {
+    "eslint-plugin-node": "^11.1.0"
+  }
+}

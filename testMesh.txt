@@ -1,0 +1,1195 @@
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+Mesh build failed e [YError]: Cannot find module 'graphql-import-node/register'
+Require stack:
+- internal/preload
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/yargs/build/index.cjs:1:32067
+    at j (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/yargs/build/index.cjs:1:4977)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/yargs/build/index.cjs:1:31882
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/yargs/build/index.cjs:1:4722
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💥 [1m🕸️  Mesh - AdobeCommerce[0m [31mFailed to generate the schema Error: Failed to fetch introspection from {context.secrets.COMMERCE_GRAPHQL_ENDPOINT}: TypeError: Invalid URL
+    at new URL (node:internal/url:819:25)
+    at new ClientRequest (node:_http_client:198:30)
+    at request (node:http:108:10)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:83:33
+    at new Promise (<anonymous>)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:37:12)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:34:16)
+    at wrappedFetchFn (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:60:30)
+    at async Object.getWithSet (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/store/cjs/index.js:169:38)
+    at async Promise.allSettled (index 0) {
+  path: undefined,
+  locations: undefined,
+  extensions: {
+    requestBody: {
+      query: 'query IntrospectionQuery {\n' +
+        '  __schema {\n' +
+        '    queryType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    mutationType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    subscriptionType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    types {\n' +
+        '      ...FullType\n' +
+        '    }\n' +
+        '    directives {\n' +
+        '      name\n' +
+        '      description\n' +
+        '      locations\n' +
+        '      args {\n' +
+        '        ...InputValue\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment FullType on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  description\n' +
+        '  fields(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    args {\n' +
+        '      ...InputValue\n' +
+        '    }\n' +
+        '    type {\n' +
+        '      ...TypeRef\n' +
+        '    }\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  inputFields {\n' +
+        '    ...InputValue\n' +
+        '  }\n' +
+        '  interfaces {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  enumValues(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  possibleTypes {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment InputValue on __InputValue {\n' +
+        '  name\n' +
+        '  description\n' +
+        '  type {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  defaultValue\n' +
+        '}\n' +
+        '\n' +
+        'fragment TypeRef on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  ofType {\n' +
+        '    kind\n' +
+        '    name\n' +
+        '    ofType {\n' +
+        '      kind\n' +
+        '      name\n' +
+        '      ofType {\n' +
+        '        kind\n' +
+        '        name\n' +
+        '        ofType {\n' +
+        '          kind\n' +
+        '          name\n' +
+        '          ofType {\n' +
+        '            kind\n' +
+        '            name\n' +
+        '            ofType {\n' +
+        '              kind\n' +
+        '              name\n' +
+        '              ofType {\n' +
+        '                kind\n' +
+        '                name\n' +
+        '                ofType {\n' +
+        '                  kind\n' +
+        '                  name\n' +
+        '                  ofType {\n' +
+        '                    kind\n' +
+        '                    name\n' +
+        '                  }\n' +
+        '                }\n' +
+        '              }\n' +
+        '            }\n' +
+        '          }\n' +
+        '        }\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}',
+      operationName: undefined
+    },
+    responseDetails: {}
+  }
+}
+    at GraphQLHandler.getMeshSource (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/graphql/cjs/index.js:339:23)
+    at async /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:133:28
+    at async Promise.allSettled (index 0)
+    at async getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:128:5)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+💥 [1m🕸️  Mesh[0m [31mError: Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.
+    at getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:167:15)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💥 [1m🕸️  Mesh - AdobeCommerce[0m [31mFailed to generate the schema Error: Failed to fetch introspection from {context.secrets.COMMERCE_GRAPHQL_ENDPOINT}: TypeError: Invalid URL
+    at new URL (node:internal/url:819:25)
+    at new ClientRequest (node:_http_client:198:30)
+    at request (node:http:108:10)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:83:33
+    at new Promise (<anonymous>)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:37:12)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:34:16)
+    at wrappedFetchFn (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:60:30)
+    at async Object.getWithSet (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/store/cjs/index.js:169:38)
+    at async Promise.allSettled (index 0) {
+  path: undefined,
+  locations: undefined,
+  extensions: {
+    requestBody: {
+      query: 'query IntrospectionQuery {\n' +
+        '  __schema {\n' +
+        '    queryType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    mutationType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    subscriptionType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    types {\n' +
+        '      ...FullType\n' +
+        '    }\n' +
+        '    directives {\n' +
+        '      name\n' +
+        '      description\n' +
+        '      locations\n' +
+        '      args {\n' +
+        '        ...InputValue\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment FullType on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  description\n' +
+        '  fields(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    args {\n' +
+        '      ...InputValue\n' +
+        '    }\n' +
+        '    type {\n' +
+        '      ...TypeRef\n' +
+        '    }\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  inputFields {\n' +
+        '    ...InputValue\n' +
+        '  }\n' +
+        '  interfaces {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  enumValues(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  possibleTypes {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment InputValue on __InputValue {\n' +
+        '  name\n' +
+        '  description\n' +
+        '  type {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  defaultValue\n' +
+        '}\n' +
+        '\n' +
+        'fragment TypeRef on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  ofType {\n' +
+        '    kind\n' +
+        '    name\n' +
+        '    ofType {\n' +
+        '      kind\n' +
+        '      name\n' +
+        '      ofType {\n' +
+        '        kind\n' +
+        '        name\n' +
+        '        ofType {\n' +
+        '          kind\n' +
+        '          name\n' +
+        '          ofType {\n' +
+        '            kind\n' +
+        '            name\n' +
+        '            ofType {\n' +
+        '              kind\n' +
+        '              name\n' +
+        '              ofType {\n' +
+        '                kind\n' +
+        '                name\n' +
+        '                ofType {\n' +
+        '                  kind\n' +
+        '                  name\n' +
+        '                  ofType {\n' +
+        '                    kind\n' +
+        '                    name\n' +
+        '                  }\n' +
+        '                }\n' +
+        '              }\n' +
+        '            }\n' +
+        '          }\n' +
+        '        }\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}',
+      operationName: undefined
+    },
+    responseDetails: {}
+  }
+}
+    at GraphQLHandler.getMeshSource (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/graphql/cjs/index.js:339:23)
+    at async /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:133:28
+    at async Promise.allSettled (index 0)
+    at async getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:128:5)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+💥 [1m🕸️  Mesh[0m [31mError: Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.
+    at getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:167:15)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💥 [1m🕸️  Mesh - AdobeCommerce[0m [31mFailed to generate the schema Error: Failed to fetch introspection from {context.secrets.COMMERCE_GRAPHQL_ENDPOINT}: TypeError: Invalid URL
+    at new URL (node:internal/url:819:25)
+    at new ClientRequest (node:_http_client:198:30)
+    at request (node:http:108:10)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:83:33
+    at new Promise (<anonymous>)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:37:12)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:34:16)
+    at wrappedFetchFn (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:60:30)
+    at async Object.getWithSet (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/store/cjs/index.js:169:38)
+    at async Promise.allSettled (index 0) {
+  path: undefined,
+  locations: undefined,
+  extensions: {
+    requestBody: {
+      query: 'query IntrospectionQuery {\n' +
+        '  __schema {\n' +
+        '    queryType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    mutationType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    subscriptionType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    types {\n' +
+        '      ...FullType\n' +
+        '    }\n' +
+        '    directives {\n' +
+        '      name\n' +
+        '      description\n' +
+        '      locations\n' +
+        '      args {\n' +
+        '        ...InputValue\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment FullType on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  description\n' +
+        '  fields(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    args {\n' +
+        '      ...InputValue\n' +
+        '    }\n' +
+        '    type {\n' +
+        '      ...TypeRef\n' +
+        '    }\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  inputFields {\n' +
+        '    ...InputValue\n' +
+        '  }\n' +
+        '  interfaces {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  enumValues(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  possibleTypes {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment InputValue on __InputValue {\n' +
+        '  name\n' +
+        '  description\n' +
+        '  type {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  defaultValue\n' +
+        '}\n' +
+        '\n' +
+        'fragment TypeRef on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  ofType {\n' +
+        '    kind\n' +
+        '    name\n' +
+        '    ofType {\n' +
+        '      kind\n' +
+        '      name\n' +
+        '      ofType {\n' +
+        '        kind\n' +
+        '        name\n' +
+        '        ofType {\n' +
+        '          kind\n' +
+        '          name\n' +
+        '          ofType {\n' +
+        '            kind\n' +
+        '            name\n' +
+        '            ofType {\n' +
+        '              kind\n' +
+        '              name\n' +
+        '              ofType {\n' +
+        '                kind\n' +
+        '                name\n' +
+        '                ofType {\n' +
+        '                  kind\n' +
+        '                  name\n' +
+        '                  ofType {\n' +
+        '                    kind\n' +
+        '                    name\n' +
+        '                  }\n' +
+        '                }\n' +
+        '              }\n' +
+        '            }\n' +
+        '          }\n' +
+        '        }\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}',
+      operationName: undefined
+    },
+    responseDetails: {}
+  }
+}
+    at GraphQLHandler.getMeshSource (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/graphql/cjs/index.js:339:23)
+    at async /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:133:28
+    at async Promise.allSettled (index 0)
+    at async getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:128:5)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+💥 [1m🕸️  Mesh[0m [31mError: Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.
+    at getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:167:15)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💥 [1m🕸️  Mesh - AdobeCommerce[0m [31mFailed to generate the schema Error: Failed to fetch introspection from {context.secrets.COMMERCE_GRAPHQL_ENDPOINT}: TypeError: Invalid URL
+    at new URL (node:internal/url:819:25)
+    at new ClientRequest (node:_http_client:198:30)
+    at request (node:http:108:10)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:83:33
+    at new Promise (<anonymous>)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:37:12)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:34:16)
+    at wrappedFetchFn (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:60:30)
+    at async Object.getWithSet (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/store/cjs/index.js:169:38)
+    at async Promise.allSettled (index 0) {
+  path: undefined,
+  locations: undefined,
+  extensions: {
+    requestBody: {
+      query: 'query IntrospectionQuery {\n' +
+        '  __schema {\n' +
+        '    queryType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    mutationType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    subscriptionType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    types {\n' +
+        '      ...FullType\n' +
+        '    }\n' +
+        '    directives {\n' +
+        '      name\n' +
+        '      description\n' +
+        '      locations\n' +
+        '      args {\n' +
+        '        ...InputValue\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment FullType on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  description\n' +
+        '  fields(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    args {\n' +
+        '      ...InputValue\n' +
+        '    }\n' +
+        '    type {\n' +
+        '      ...TypeRef\n' +
+        '    }\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  inputFields {\n' +
+        '    ...InputValue\n' +
+        '  }\n' +
+        '  interfaces {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  enumValues(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  possibleTypes {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment InputValue on __InputValue {\n' +
+        '  name\n' +
+        '  description\n' +
+        '  type {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  defaultValue\n' +
+        '}\n' +
+        '\n' +
+        'fragment TypeRef on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  ofType {\n' +
+        '    kind\n' +
+        '    name\n' +
+        '    ofType {\n' +
+        '      kind\n' +
+        '      name\n' +
+        '      ofType {\n' +
+        '        kind\n' +
+        '        name\n' +
+        '        ofType {\n' +
+        '          kind\n' +
+        '          name\n' +
+        '          ofType {\n' +
+        '            kind\n' +
+        '            name\n' +
+        '            ofType {\n' +
+        '              kind\n' +
+        '              name\n' +
+        '              ofType {\n' +
+        '                kind\n' +
+        '                name\n' +
+        '                ofType {\n' +
+        '                  kind\n' +
+        '                  name\n' +
+        '                  ofType {\n' +
+        '                    kind\n' +
+        '                    name\n' +
+        '                  }\n' +
+        '                }\n' +
+        '              }\n' +
+        '            }\n' +
+        '          }\n' +
+        '        }\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}',
+      operationName: undefined
+    },
+    responseDetails: {}
+  }
+}
+    at GraphQLHandler.getMeshSource (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/graphql/cjs/index.js:339:23)
+    at async /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:133:28
+    at async Promise.allSettled (index 0)
+    at async getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:128:5)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+💥 [1m🕸️  Mesh[0m [31mError: Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.
+    at getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:167:15)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💥 [1m🕸️  Mesh - AdobeCommerce[0m [31mFailed to generate the schema Error: Failed to fetch introspection from {context.secrets.COMMERCE_GRAPHQL_ENDPOINT}: TypeError: Invalid URL
+    at new URL (node:internal/url:819:25)
+    at new ClientRequest (node:_http_client:198:30)
+    at request (node:http:108:10)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:83:33
+    at new Promise (<anonymous>)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:37:12)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:34:16)
+    at wrappedFetchFn (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:60:30)
+    at async Object.getWithSet (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/store/cjs/index.js:169:38)
+    at async Promise.allSettled (index 0) {
+  path: undefined,
+  locations: undefined,
+  extensions: {
+    requestBody: {
+      query: 'query IntrospectionQuery {\n' +
+        '  __schema {\n' +
+        '    queryType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    mutationType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    subscriptionType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    types {\n' +
+        '      ...FullType\n' +
+        '    }\n' +
+        '    directives {\n' +
+        '      name\n' +
+        '      description\n' +
+        '      locations\n' +
+        '      args {\n' +
+        '        ...InputValue\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment FullType on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  description\n' +
+        '  fields(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    args {\n' +
+        '      ...InputValue\n' +
+        '    }\n' +
+        '    type {\n' +
+        '      ...TypeRef\n' +
+        '    }\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  inputFields {\n' +
+        '    ...InputValue\n' +
+        '  }\n' +
+        '  interfaces {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  enumValues(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  possibleTypes {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment InputValue on __InputValue {\n' +
+        '  name\n' +
+        '  description\n' +
+        '  type {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  defaultValue\n' +
+        '}\n' +
+        '\n' +
+        'fragment TypeRef on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  ofType {\n' +
+        '    kind\n' +
+        '    name\n' +
+        '    ofType {\n' +
+        '      kind\n' +
+        '      name\n' +
+        '      ofType {\n' +
+        '        kind\n' +
+        '        name\n' +
+        '        ofType {\n' +
+        '          kind\n' +
+        '          name\n' +
+        '          ofType {\n' +
+        '            kind\n' +
+        '            name\n' +
+        '            ofType {\n' +
+        '              kind\n' +
+        '              name\n' +
+        '              ofType {\n' +
+        '                kind\n' +
+        '                name\n' +
+        '                ofType {\n' +
+        '                  kind\n' +
+        '                  name\n' +
+        '                  ofType {\n' +
+        '                    kind\n' +
+        '                    name\n' +
+        '                  }\n' +
+        '                }\n' +
+        '              }\n' +
+        '            }\n' +
+        '          }\n' +
+        '        }\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}',
+      operationName: undefined
+    },
+    responseDetails: {}
+  }
+}
+    at GraphQLHandler.getMeshSource (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/graphql/cjs/index.js:339:23)
+    at async /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:133:28
+    at async Promise.allSettled (index 0)
+    at async getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:128:5)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+💥 [1m🕸️  Mesh[0m [31mError: Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.
+    at getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:167:15)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💥 [1m🕸️  Mesh - AdobeCommerce[0m [31mFailed to generate the schema Error: Failed to fetch introspection from {context.secrets.COMMERCE_GRAPHQL_ENDPOINT}: TypeError: Invalid URL
+    at new URL (node:internal/url:819:25)
+    at new ClientRequest (node:_http_client:196:30)
+    at request (node:http:108:10)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:83:33
+    at new Promise (<anonymous>)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:37:12)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:34:16)
+    at wrappedFetchFn (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:60:30)
+    at async Object.getWithSet (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/store/cjs/index.js:169:38)
+    at async Promise.allSettled (index 0) {
+  path: undefined,
+  locations: undefined,
+  extensions: {
+    requestBody: {
+      query: 'query IntrospectionQuery {\n' +
+        '  __schema {\n' +
+        '    queryType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    mutationType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    subscriptionType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    types {\n' +
+        '      ...FullType\n' +
+        '    }\n' +
+        '    directives {\n' +
+        '      name\n' +
+        '      description\n' +
+        '      locations\n' +
+        '      args {\n' +
+        '        ...InputValue\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment FullType on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  description\n' +
+        '  fields(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    args {\n' +
+        '      ...InputValue\n' +
+        '    }\n' +
+        '    type {\n' +
+        '      ...TypeRef\n' +
+        '    }\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  inputFields {\n' +
+        '    ...InputValue\n' +
+        '  }\n' +
+        '  interfaces {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  enumValues(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  possibleTypes {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment InputValue on __InputValue {\n' +
+        '  name\n' +
+        '  description\n' +
+        '  type {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  defaultValue\n' +
+        '}\n' +
+        '\n' +
+        'fragment TypeRef on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  ofType {\n' +
+        '    kind\n' +
+        '    name\n' +
+        '    ofType {\n' +
+        '      kind\n' +
+        '      name\n' +
+        '      ofType {\n' +
+        '        kind\n' +
+        '        name\n' +
+        '        ofType {\n' +
+        '          kind\n' +
+        '          name\n' +
+        '          ofType {\n' +
+        '            kind\n' +
+        '            name\n' +
+        '            ofType {\n' +
+        '              kind\n' +
+        '              name\n' +
+        '              ofType {\n' +
+        '                kind\n' +
+        '                name\n' +
+        '                ofType {\n' +
+        '                  kind\n' +
+        '                  name\n' +
+        '                  ofType {\n' +
+        '                    kind\n' +
+        '                    name\n' +
+        '                  }\n' +
+        '                }\n' +
+        '              }\n' +
+        '            }\n' +
+        '          }\n' +
+        '        }\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}',
+      operationName: undefined
+    },
+    responseDetails: {}
+  }
+}
+    at GraphQLHandler.getMeshSource (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/graphql/cjs/index.js:339:23)
+    at async /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:133:28
+    at async Promise.allSettled (index 0)
+    at async getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:128:5)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+💥 [1m🕸️  Mesh[0m [31mError: Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.
+    at getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:167:15)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💥 [1m🕸️  Mesh - AdobeCommerce[0m [31mFailed to generate the schema Error: Failed to fetch introspection from {context.secrets.COMMERCE_GRAPHQL_ENDPOINT}: TypeError: Invalid URL
+    at new URL (node:internal/url:819:25)
+    at new ClientRequest (node:_http_client:196:30)
+    at request (node:http:108:10)
+    at /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:83:33
+    at new Promise (<anonymous>)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:37:12)
+    at fetchPonyfill (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@whatwg-node/node-fetch/cjs/fetch.js:34:16)
+    at wrappedFetchFn (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:60:30)
+    at async Object.getWithSet (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/store/cjs/index.js:169:38)
+    at async Promise.allSettled (index 0) {
+  path: undefined,
+  locations: undefined,
+  extensions: {
+    requestBody: {
+      query: 'query IntrospectionQuery {\n' +
+        '  __schema {\n' +
+        '    queryType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    mutationType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    subscriptionType {\n' +
+        '      name\n' +
+        '    }\n' +
+        '    types {\n' +
+        '      ...FullType\n' +
+        '    }\n' +
+        '    directives {\n' +
+        '      name\n' +
+        '      description\n' +
+        '      locations\n' +
+        '      args {\n' +
+        '        ...InputValue\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment FullType on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  description\n' +
+        '  fields(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    args {\n' +
+        '      ...InputValue\n' +
+        '    }\n' +
+        '    type {\n' +
+        '      ...TypeRef\n' +
+        '    }\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  inputFields {\n' +
+        '    ...InputValue\n' +
+        '  }\n' +
+        '  interfaces {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  enumValues(includeDeprecated: true) {\n' +
+        '    name\n' +
+        '    description\n' +
+        '    isDeprecated\n' +
+        '    deprecationReason\n' +
+        '  }\n' +
+        '  possibleTypes {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '}\n' +
+        '\n' +
+        'fragment InputValue on __InputValue {\n' +
+        '  name\n' +
+        '  description\n' +
+        '  type {\n' +
+        '    ...TypeRef\n' +
+        '  }\n' +
+        '  defaultValue\n' +
+        '}\n' +
+        '\n' +
+        'fragment TypeRef on __Type {\n' +
+        '  kind\n' +
+        '  name\n' +
+        '  ofType {\n' +
+        '    kind\n' +
+        '    name\n' +
+        '    ofType {\n' +
+        '      kind\n' +
+        '      name\n' +
+        '      ofType {\n' +
+        '        kind\n' +
+        '        name\n' +
+        '        ofType {\n' +
+        '          kind\n' +
+        '          name\n' +
+        '          ofType {\n' +
+        '            kind\n' +
+        '            name\n' +
+        '            ofType {\n' +
+        '              kind\n' +
+        '              name\n' +
+        '              ofType {\n' +
+        '                kind\n' +
+        '                name\n' +
+        '                ofType {\n' +
+        '                  kind\n' +
+        '                  name\n' +
+        '                  ofType {\n' +
+        '                    kind\n' +
+        '                    name\n' +
+        '                  }\n' +
+        '                }\n' +
+        '              }\n' +
+        '            }\n' +
+        '          }\n' +
+        '        }\n' +
+        '      }\n' +
+        '    }\n' +
+        '  }\n' +
+        '}',
+      operationName: undefined
+    },
+    responseDetails: {}
+  }
+}
+    at GraphQLHandler.getMeshSource (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/graphql/cjs/index.js:339:23)
+    at async /Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:133:28
+    at async Promise.allSettled (index 0)
+    at async getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:128:5)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+💥 [1m🕸️  Mesh[0m [31mError: Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.
+    at getMesh (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/runtime/cjs/get-mesh.js:167:15)
+    at async Object.handler (/Users/mayur.parmar/.local/share/@adobe/aio-cli/node_modules/@graphql-mesh/cli/cjs/index.js:311:53)[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully
+Building Mesh with config: /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh
+💡 [1m🕸️  Mesh[0m [36mCleaning existing artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mReading the configuration[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating the unified schema[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating artifacts[0m
+💡 [1m🕸️  Mesh[0m [36mGenerating index file in TypeScript[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for ESM to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mWriting index.ts for CJS to the disk.[0m
+💡 [1m🕸️  Mesh[0m [36mCleanup[0m
+💡 [1m🕸️  Mesh[0m [36mDone! => /Users/mayur.parmar/Documents/code/appbuilder/api-mesh-encryption-modular-2/testMesh/.mesh[0m
+Mesh built successfully

@@ -6,10 +6,6 @@ tempfiles/
 testMesh/
 meshes/
 
-# Secrets — never commit
-secrets.yaml
-mesh/prod-secrets.yaml
-mesh/stage-secrets.yaml
 .env
 
 # OS

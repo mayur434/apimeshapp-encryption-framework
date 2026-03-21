@@ -81,7 +81,7 @@ Example decoded envelope:
 │   ├── prod-secrets.yaml               # Production secrets (not committed)
 │   ├── stage-secrets.yaml              # Stage secrets (not committed)
 │   └── schemas/
-│       └── ipapi-response.json         # JSON schema for IP API response
+│       └── <custom-schema>.json         # Custom JSON schema for API Mesh
 ├── src/
 │   ├── config/
 │   │   ├── encryption-registry.js      # Registry — add/remove operations here

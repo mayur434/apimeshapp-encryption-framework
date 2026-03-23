@@ -19,6 +19,11 @@ const registry = [
     wrapperField: 'encryptedGenerateCustomerToken',
     requestMode: 'encrypted',
     responseEncryption: 'always'
+  },
+  {
+    wrapperField: 'encryptedCreateLead',
+    requestMode: 'encrypted',
+    responseEncryption: 'always'
   }
 ];
 

@@ -18,6 +18,8 @@ const DEFAULT_ITERATION_COUNT = 10000;
 // Keep this in sync with src/config/encryption-registry.js.
 const COMMERCE_ENDPOINT = '{{COMMERCE_GRAPHQL_ENDPOINT}}';
 const COMMERCE_HOST = '{{ALLOWED_COMMERCE_HOSTS}}';
+const SFDC_ENDPOINT = '{{SFDC_ENDPOINT}}';
+const SFDC_HOST = '{{ALLOWED_SFDC_HOSTS}}';
 
 // Registry: maps each wrapper field to its upstream source.
 // The client supplies the full GraphQL query inside the payload.
@@ -35,6 +37,13 @@ const registry = [
     requestMode: 'encrypted',
     responseEncryption: 'always',
     source: { endpoint: COMMERCE_ENDPOINT, allowedHosts: COMMERCE_HOST }
+  },
+  {
+    wrapperField: 'encryptedCreateLead',
+    operationType: 'Mutation',
+    requestMode: 'encrypted',
+    responseEncryption: 'always',
+    source: { endpoint: SFDC_ENDPOINT, allowedHosts: SFDC_HOST }
   }
 ];
 

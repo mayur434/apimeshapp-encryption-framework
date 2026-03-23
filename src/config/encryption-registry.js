@@ -25,9 +25,13 @@ const env = loadEnv();
 
 const COMMERCE_ENDPOINT = env.COMMERCE_GRAPHQL_ENDPOINT;
 const COMMERCE_HOST = env.ALLOWED_COMMERCE_HOSTS;
+const SFDC_HOST = env.ALLOWED_SFDC_HOSTS;
+const SFDC_ENDPOINT = env.SFDC_ENDPOINT;
 
 if (!COMMERCE_ENDPOINT) throw new Error('Missing required env: COMMERCE_GRAPHQL_ENDPOINT');
 if (!COMMERCE_HOST) throw new Error('Missing required env: ALLOWED_COMMERCE_HOSTS');
+if (!SFDC_HOST) throw new Error('Missing required env: ALLOWED_SFDC_HOSTS');
+if (!SFDC_ENDPOINT) throw new Error('Missing required env: SFDC_ENDPOINT');
 
 module.exports = [
   // ─── Adobe Commerce Source ────────────────────────────────────────────────
@@ -52,6 +56,16 @@ module.exports = [
     source: {
       endpoint: COMMERCE_ENDPOINT,
       allowedHosts: COMMERCE_HOST
+    }
+  }, 
+  {
+    wrapperField: 'encryptedCreateLead',
+    operationType: 'Mutation',
+    requestMode: 'encrypted',
+    responseEncryption: 'always',
+    source: {
+      endpoint: SFDC_ENDPOINT,
+      allowedHosts: SFDC_HOST
     }
   }
 

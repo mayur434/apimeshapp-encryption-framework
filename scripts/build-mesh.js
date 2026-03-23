@@ -26,12 +26,50 @@ function getMeshTemplate() {
           name: 'AdobeCommerce',
           handler: {
             graphql: {
-              endpoint: '{{COMMERCE_GRAPHQL_ENDPOINT}}',
+              endpoint: '{{env.COMMERCE_GRAPHQL_ENDPOINT}}',
               operationHeaders: {
                 'Content-Type': 'application/json'
               }
             }
           }
+        },
+        {
+          name: 'sfdc',
+          handler: {
+            openapi: {
+              source: 'sfdc-openapi.json',
+              operationHeaders: {
+                Authorization: '{context.headers.authorization}',
+                'Content-Type': 'application/json'
+              }
+            }
+          },
+          transforms: [
+            {
+              rename: {
+                renames: [
+                  {
+                    from: {
+                      type: 'Mutation',
+                      field: 'post_CallCenterLead_services_apexrest_bstcreatelead'
+                    },
+                    to: {
+                      type: 'Mutation',
+                      field: 'WebToLeadIntegration'
+                    }
+                  },
+                  {
+                    from: {
+                      type: 'mutationInput_post_CallCenterLead_services_apexrest_bstcreatelead_input_oneOf_0_Input'
+                    },
+                    to: {
+                      type: 'WebToLeadInput'
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         }
       ],
       plugins: [
@@ -60,7 +98,7 @@ function getMeshTemplate() {
 function interpolate(content, env) {
   return content.replace(/\{\{([A-Z0-9_]+)\}\}/g, (match, key) => {
     if (env[key] !== undefined) return env[key];
-    console.warn(`[build-mesh] Warning: placeholder {{${key}}} has no value — check mesh/prod-secrets.yaml`);
+    console.warn(`[build-mesh] Warning: placeholder {{env.${key}}} has no value — check mesh/prod-secrets.yaml`);
     return match;
   });
 }

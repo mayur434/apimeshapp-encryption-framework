@@ -11,6 +11,44 @@
             }
           }
         }
+      },
+      {
+        "name": "sfdc",
+        "handler": {
+          "openapi": {
+            "source": "sfdc-openapi.json",
+            "operationHeaders": {
+              "Authorization": "{context.headers.authorization}",
+              "Content-Type": "application/json"
+            }
+          }
+        },
+        "transforms": [
+          {
+            "rename": {
+              "renames": [
+                {
+                  "from": {
+                    "type": "Mutation",
+                    "field": "post_CallCenterLead_services_apexrest_bstcreatelead"
+                  },
+                  "to": {
+                    "type": "Mutation",
+                    "field": "WebToLeadIntegration"
+                  }
+                },
+                {
+                  "from": {
+                    "type": "mutationInput_post_CallCenterLead_services_apexrest_bstcreatelead_input_oneOf_0_Input"
+                  },
+                  "to": {
+                    "type": "WebToLeadInput"
+                  }
+                }
+              ]
+            }
+          }
+        ]
       }
     ],
     "plugins": [

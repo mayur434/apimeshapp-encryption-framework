@@ -17,8 +17,26 @@ jobs:
 
       - run: npm ci
 
+      - name: Build mesh
+        run: npm run build:mesh
+        env:
+          MESH_AES_PASSPHRASE: ${{ secrets.MESH_AES_PASSPHRASE }}
+          COMMERCE_GRAPHQL_ENDPOINT: ${{ secrets.COMMERCE_GRAPHQL_ENDPOINT }}
+          ALLOWED_COMMERCE_HOSTS: ${{ secrets.ALLOWED_COMMERCE_HOSTS }}
+          SF_BEARER_TOKEN: ${{ secrets.SF_BEARER_TOKEN }}
+          SFDC_ENDPOINT: ${{ secrets.SFDC_ENDPOINT }}
+          ALLOWED_SFDC_HOSTS: ${{ secrets.ALLOWED_SFDC_HOSTS }}
+
       - name: Validate mesh config
         run: node scripts/validate-mesh.js
+        env:
+          CI: true
+          MESH_AES_PASSPHRASE: ${{ secrets.MESH_AES_PASSPHRASE }}
+          COMMERCE_GRAPHQL_ENDPOINT: ${{ secrets.COMMERCE_GRAPHQL_ENDPOINT }}
+          ALLOWED_COMMERCE_HOSTS: ${{ secrets.ALLOWED_COMMERCE_HOSTS }}
+          SF_BEARER_TOKEN: ${{ secrets.SF_BEARER_TOKEN }}
+          SFDC_ENDPOINT: ${{ secrets.SFDC_ENDPOINT }}
+          ALLOWED_SFDC_HOSTS: ${{ secrets.ALLOWED_SFDC_HOSTS }}
 
       - name: Run tests
         run: npm test
@@ -53,6 +71,9 @@ jobs:
           MESH_AES_PASSPHRASE: ${{ secrets.MESH_AES_PASSPHRASE }}
           COMMERCE_GRAPHQL_ENDPOINT: ${{ secrets.COMMERCE_GRAPHQL_ENDPOINT }}
           ALLOWED_COMMERCE_HOSTS: ${{ secrets.ALLOWED_COMMERCE_HOSTS }}
+          SF_BEARER_TOKEN: ${{ secrets.SF_BEARER_TOKEN }}
+          SFDC_ENDPOINT: ${{ secrets.SFDC_ENDPOINT }}
+          ALLOWED_SFDC_HOSTS: ${{ secrets.ALLOWED_SFDC_HOSTS }}
 
       - name: Deploy mesh
         run: aio api-mesh update mesh/mesh.json

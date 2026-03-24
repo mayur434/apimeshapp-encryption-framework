@@ -38,7 +38,9 @@ console.log('Mesh config validation\n');
 // ── mesh.json ───────────────────────────────────────────────────────────────
 
 check('mesh/mesh.json exists', () => {
-  if (!fs.existsSync(MESH_PATH)) throw new Error('File not found: mesh/mesh.json');
+  if (!fs.existsSync(MESH_PATH)) {
+    throw new Error('File not found: mesh/mesh.json — run "npm run build:mesh" first');
+  }
 });
 
 let mesh;
@@ -109,14 +111,15 @@ if (mesh) {
 
 // ── Secrets files ───────────────────────────────────────────────────────────
 
+// ── Secrets: check YAML files locally, fall back to env vars in CI ──────────
+
+const isCI = !!process.env.CI;
+
 for (const secretFile of SECRET_FILES) {
   const secretPath = path.join(ROOT, secretFile);
 
-  check(`${secretFile} exists`, () => {
-    if (!fs.existsSync(secretPath)) throw new Error(`File not found: ${secretFile}`);
-  });
-
   if (fs.existsSync(secretPath)) {
+    check(`${secretFile} exists`, () => {});
     check(`${secretFile} has required variables`, () => {
       const content = fs.readFileSync(secretPath, 'utf8');
       const missing = REQUIRED_SECRETS.filter(key => !content.includes(key));
@@ -124,7 +127,22 @@ for (const secretFile of SECRET_FILES) {
         throw new Error(`Missing variables: ${missing.join(', ')}`);
       }
     });
+  } else if (isCI) {
+    check(`${secretFile} (skipped in CI — using env vars)`, () => {});
+  } else {
+    check(`${secretFile} exists`, () => {
+      throw new Error(`File not found: ${secretFile}`);
+    });
   }
+}
+
+if (isCI) {
+  check('required secrets available as env vars', () => {
+    const missing = REQUIRED_SECRETS.filter(key => !process.env[key]);
+    if (missing.length > 0) {
+      throw new Error(`Missing env vars: ${missing.join(', ')}`);
+    }
+  });
 }
 
 // ── Result ──────────────────────────────────────────────────────────────────

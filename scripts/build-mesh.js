@@ -26,7 +26,7 @@ function getMeshTemplate() {
           name: 'AdobeCommerce',
           handler: {
             graphql: {
-              endpoint: 'https://integration2-hohc4oi-n4gss5dvoiyhi.ap-3.magentosite.cloud/graphql',
+              endpoint: '{{COMMERCE_GRAPHQL_ENDPOINT}}',
               operationHeaders: {
                 'Content-Type': 'application/json'
               }
@@ -34,18 +34,18 @@ function getMeshTemplate() {
           }
         },
         {
-        "name": "SalesforceLeadAPI",
-        "handler": {
-          "openapi": {
-            "source": "./sfdc-openapi.json",
-            "sourceFormat": "json",
-            "operationHeaders": {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer {context.secrets.SF_BEARER_TOKEN}"
+          name: 'SalesforceLeadAPI',
+          handler: {
+            openapi: {
+              source: './sfdc-openapi.json',
+              sourceFormat: 'json',
+              operationHeaders: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer {{SF_BEARER_TOKEN}}'
+              }
             }
           }
         }
-      }
       ],
       plugins: [
         {

@@ -17,7 +17,6 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const MESH_PATH = path.join(ROOT, 'mesh', 'mesh.json');
-const RESOLVED_MESH_PATH = path.join(ROOT, 'mesh-artifact', 'mesh.json');
 const REQUIRED_SECRETS = ['MESH_AES_PASSPHRASE', 'COMMERCE_GRAPHQL_ENDPOINT', 'ALLOWED_COMMERCE_HOSTS', 'SFDC_ENDPOINT', 'ALLOWED_SFDC_HOSTS', 'SF_BEARER_TOKEN'];
 const SECRET_FILES = ['mesh/prod-secrets.yaml', 'mesh/stage-secrets.yaml'];
 

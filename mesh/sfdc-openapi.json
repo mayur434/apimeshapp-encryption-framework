@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://mpowerpidilite--partial.sandbox.my.salesforce-sites.com"
+      "url": "{{SFDC_ENDPOINT}}"
     }
   ],
   "paths": {

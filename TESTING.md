@@ -3,8 +3,8 @@
 ## Prerequisites
 
 ```bash
-npm run build:mesh          # Build mesh config from template + secrets
-npm run start:mesh -- --port 5001   # Start mesh locally (port 5000 is reserved on macOS)
+npm run build:mesh                   # Build mesh.json (no secrets needed)
+npm run start:mesh -- --port 5001    # Start mesh locally (uses --env .env --secrets mesh/stage-secrets.yaml)
 ```
 
 Mesh endpoint: `http://localhost:5001/graphql`
@@ -258,7 +258,7 @@ curl -s http://localhost:5001/graphql \
 ## Useful Commands
 
 ```bash
-npm run build:mesh            # Rebuild mesh.json from sources + secrets
+npm run build:mesh            # Generate mesh.json (no secrets needed)
 npm run validate              # Validate mesh config and secrets
 npm run encrypt -- "text"     # Encrypt a raw string value
 npm run decrypt -- "envelope" # Decrypt an envelope string

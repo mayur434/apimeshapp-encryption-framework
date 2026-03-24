@@ -22,6 +22,8 @@ jobs:
           test -f src/hooks/before-all.js
           test -f src/resolvers/encrypted-operations.js
           test -f src/config/encryption-registry.js
+          test -f src/config/type-defs.js
+          test -f mesh/sfdc-openapi.json
           echo "All source files present."
 
       - name: Run tests

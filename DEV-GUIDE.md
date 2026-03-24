@@ -22,16 +22,22 @@ Client (encrypted payload)
 ┌─────────────────────────────────────┐
 │           Build Time (Node.js)       │
 │                                      │
-│  encryption-registry.js ◄── secrets.yaml
+│  encryption-registry.js             │
 │         │                            │
 │    type-defs.js                      │
 │         │                            │
 │    build-mesh.js ──► mesh.json       │
-│    (interpolates {{PLACEHOLDER}})    │
-│         │                            │
-│    mesh-artifact/                    │
-│      ├── before-all.js (resolved)    │
-│      └── encrypted-operations.js     │
+│    (generates {{env.X}} template)    │
+└──────────┬──────────────────────────┘
+           │
+┌──────────▼──────────────────────────┐
+│      Run / Deploy (AIO CLI)          │
+│                                      │
+│  --env .env                          │
+│    → resolves {{env.X}} in handlers  │
+│                                      │
+│  --secrets secrets.yaml              │
+│    → populates context.secrets       │
 └──────────┬──────────────────────────┘
            │
 ┌──────────▼──────────────────────────┐
@@ -41,6 +47,7 @@ Client (encrypted payload)
 │    → validates envelope structure    │
 │                                      │
 │  Resolver: encrypted-operations.js   │
+│    → reads context.secrets           │
 │    → decrypts request                │
 │    → routes to upstream (GQL/REST)   │
 │    → encrypts response               │
@@ -55,13 +62,13 @@ Client (encrypted payload)
 ## Project Structure
 
 ```
-├── mesh/
-│   ├── mesh.json              ← Built artifact (DO NOT edit directly)
-│   ├── sfdc-openapi.json      ← OpenAPI schema for REST sources
-│   ├── prod-secrets.yaml      ← Production secrets (git-ignored)
-│   └── stage-secrets.yaml     ← Staging secrets (git-ignored)
+├── mesh.json                       ← Built artifact at root (generated, DO NOT edit)
+├── .env                            ← Handler endpoints for --env flag (git-ignored)
 │
-├── mesh-artifact/             ← Build output (interpolated files)
+├── mesh/
+│   ├── sfdc-openapi.json           ← OpenAPI schema for REST sources
+│   ├── prod-secrets.yaml           ← Production secrets (git-ignored)
+│   └── stage-secrets.yaml          ← Staging secrets (git-ignored)
 │
 ├── src/
 │   ├── config/
@@ -73,16 +80,47 @@ Client (encrypted payload)
 │       └── encrypted-operations.js ← Main resolver (self-contained)
 │
 ├── scripts/
-│   ├── build-mesh.js          ← Build orchestrator
-│   ├── env-loader.js          ← Secrets YAML parser
-│   ├── crypto-envelope.js     ← AES-CBC encryption library
-│   ├── encrypt-payload.js     ← CLI: encrypt GraphQL payloads
-│   ├── encrypt-rest-payload.js← CLI: encrypt REST payloads
-│   ├── encrypt-value.js       ← CLI: encrypt a raw string
-│   ├── decrypt-value.js       ← CLI: decrypt an envelope
-│   ├── decrypt-response.js    ← CLI: decrypt a response payload
-│   └── validate-mesh.js       ← Config validator
+│   ├── build-mesh.js               ← Build orchestrator
+│   ├── env-loader.js               ← Secrets YAML parser (used by CLI scripts)
+│   ├── crypto-envelope.js          ← AES-CBC encryption library
+│   ├── encrypt-payload.js          ← CLI: encrypt GraphQL payloads
+│   ├── encrypt-rest-payload.js     ← CLI: encrypt REST payloads
+│   ├── encrypt-value.js            ← CLI: encrypt a raw string
+│   ├── decrypt-value.js            ← CLI: decrypt an envelope
+│   ├── decrypt-response.js         ← CLI: decrypt a response payload
+│   ├── validate-mesh.js            ← Config validator
+│   ├── validate-workflows.js       ← GitHub Actions validator
+│   └── test-roundtrip.js           ← E2E roundtrip test
 ```
+
+---
+
+## Secrets Architecture
+
+Secrets are split across two AIO CLI mechanisms:
+
+| Mechanism | File | Usage in mesh.json / resolver | Purpose |
+|-----------|------|-------------------------------|---------|
+| `--env .env` | `.env` (KEY=VALUE) | `{{env.X}}` in handler endpoints | Handler URLs need real values for schema introspection |
+| `--secrets YAML` | `mesh/stage-secrets.yaml` | `context.secrets.X` in resolver | Runtime secrets (passphrase, endpoints, tokens, hostlists) |
+
+**`.env` file** (2 variables):
+```env
+COMMERCE_GRAPHQL_ENDPOINT=https://your-commerce.cloud/graphql
+SF_BEARER_TOKEN=your-salesforce-token
+```
+
+**`mesh/stage-secrets.yaml`** (6 variables):
+```yaml
+MESH_AES_PASSPHRASE: your-secure-passphrase
+COMMERCE_GRAPHQL_ENDPOINT: https://your-commerce.cloud/graphql
+ALLOWED_COMMERCE_HOSTS: your-commerce.cloud
+SF_BEARER_TOKEN: your-salesforce-token
+SFDC_ENDPOINT: https://your-instance.salesforce-sites.com/path/to/api
+ALLOWED_SFDC_HOSTS: your-instance.salesforce-sites.com
+```
+
+> **Important:** These files must be git-ignored. Never commit secrets.
 
 ---
 
@@ -90,23 +128,7 @@ Client (encrypted payload)
 
 ### 1. Set Up Secrets
 
-Create `mesh/stage-secrets.yaml` (and `mesh/prod-secrets.yaml` for production):
-
-```yaml
-# Commerce source
-COMMERCE_GRAPHQL_ENDPOINT: https://your-commerce-instance.cloud/graphql
-ALLOWED_COMMERCE_HOSTS: your-commerce-instance.cloud
-
-# Encryption
-MESH_AES_PASSPHRASE: your-secure-passphrase
-
-# Salesforce REST source (if using)
-SF_BEARER_TOKEN: your-salesforce-oauth-token
-SFDC_ENDPOINT: https://your-instance.salesforce-sites.com/path/to/api
-ALLOWED_SFDC_HOSTS: your-instance.salesforce-sites.com
-```
-
-> **Important:** These files must be git-ignored. Never commit secrets.
+Create `.env` and `mesh/stage-secrets.yaml` as shown above.
 
 ### 2. Build
 
@@ -114,7 +136,7 @@ ALLOWED_SFDC_HOSTS: your-instance.salesforce-sites.com
 npm run build:mesh
 ```
 
-This reads the secrets, interpolates all `{{PLACEHOLDER}}` tokens in the resolver and hook files, generates the GraphQL schema, and writes the final `mesh/mesh.json`.
+Generates `mesh.json` at the project root with `{{env.X}}` handler placeholders and auto-generated GraphQL type definitions. No secrets are read or embedded during build.
 
 ### 3. Validate
 
@@ -130,13 +152,21 @@ Checks that `mesh.json` is valid, all sources are configured, secrets files exis
 npm run start:mesh -- --port 5001
 ```
 
+This runs: `aio api-mesh run mesh.json --env .env --secrets mesh/stage-secrets.yaml`
+
 > Port 5000 is typically reserved on macOS (AirPlay). Use 5001 or higher.
 
 ### 5. Test
 
 ```bash
-npm test                         # Unit tests
-node tempfiles/test-e2e.js       # End-to-end tests (if available)
+npm test                                     # Unit tests
+node scripts/test-roundtrip.js 5001          # E2E roundtrip test (mesh must be running)
+```
+
+### 6. Deploy
+
+```bash
+aio api-mesh update mesh.json --env .env --secrets mesh/prod-secrets.yaml
 ```
 
 ---
@@ -198,47 +228,56 @@ OMS_GRAPHQL_ENDPOINT: https://oms.example.com/graphql
 ALLOWED_OMS_HOSTS: oms.example.com
 ```
 
-#### Step 2 — Update the Registry (`src/config/encryption-registry.js`)
+If this is a new handler source (new upstream URL), also add the endpoint to `.env`:
+
+```env
+OMS_GRAPHQL_ENDPOINT=https://oms.example.com/graphql
+```
+
+And add the handler source to `getMeshTemplate()` in `scripts/build-mesh.js`:
 
 ```js
-const OMS_ENDPOINT = env.OMS_GRAPHQL_ENDPOINT;
-const OMS_HOST = env.ALLOWED_OMS_HOSTS;
+{
+  name: 'OMS',
+  handler: {
+    graphql: {
+      endpoint: '{{env.OMS_GRAPHQL_ENDPOINT}}',
+      operationHeaders: { 'Content-Type': 'application/json' }
+    }
+  }
+}
+```
 
-if (!OMS_ENDPOINT) throw new Error('Missing required env: OMS_GRAPHQL_ENDPOINT');
-if (!OMS_HOST) throw new Error('Missing required env: ALLOWED_OMS_HOSTS');
+#### Step 2 — Update the Registry (`src/config/encryption-registry.js`)
 
-// Add to the exported array:
+Add to the exported array using secret key references:
+
+```js
 {
   wrapperField: 'encryptedGetOrderStatus',
   operationType: 'Query',           // or 'Mutation'
   requestMode: 'encrypted',         // 'encrypted' | 'encrypted-only'
   responseEncryption: 'always',      // 'always' | 'never' | 'mirror-request'
   source: {
-    endpoint: OMS_ENDPOINT,
-    allowedHosts: OMS_HOST
+    endpointKey: 'OMS_GRAPHQL_ENDPOINT',
+    allowedHostsKey: 'ALLOWED_OMS_HOSTS'
   }
 }
 ```
 
 #### Step 3 — Sync the Resolver Registry (`src/resolvers/encrypted-operations.js`)
 
-Add the placeholder constant and registry entry at the top of the file:
+Add the same entry to the inline registry array (uses the same key references — the resolver reads actual values from `context.secrets` at runtime):
 
 ```js
-const OMS_ENDPOINT = '{{OMS_GRAPHQL_ENDPOINT}}';
-const OMS_HOST = '{{ALLOWED_OMS_HOSTS}}';
-
-// Add to the registry array:
 {
   wrapperField: 'encryptedGetOrderStatus',
   operationType: 'Query',
   requestMode: 'encrypted',
   responseEncryption: 'always',
-  source: { endpoint: OMS_ENDPOINT, allowedHosts: OMS_HOST }
+  source: { endpointKey: 'OMS_GRAPHQL_ENDPOINT', allowedHostsKey: 'ALLOWED_OMS_HOSTS' }
 }
 ```
-
-> **Critical:** Use `{{PLACEHOLDER}}` syntax — these are replaced at build time. Never use `process.env` or `context.secrets` in runtime files.
 
 #### Step 4 — Sync the Hook Registry (`src/hooks/before-all.js`)
 
@@ -347,69 +386,67 @@ ALLOWED_SUPPORT_HOSTS: support.example.com
 SUPPORT_API_KEY: your-api-key-here
 ```
 
-#### Step 3 — Add the Source to `build-mesh.js`
+#### Step 3 — Add the Handler Source to `build-mesh.js`
 
-Add to the `sources` array in the mesh template:
+Add to the `sources` array in the mesh template, using `{{env.X}}` for the bearer token:
 
 ```js
 {
   name: 'SupportAPI',
   handler: {
     openapi: {
-      source: './support-openapi.json',
+      source: './mesh/support-openapi.json',
       sourceFormat: 'json',
       operationHeaders: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer {{SUPPORT_API_KEY}}'
+        'Authorization': 'Bearer {{env.SUPPORT_API_KEY}}'
       }
     }
   }
 }
 ```
 
+Also add `SUPPORT_API_KEY` to `.env`:
+
+```env
+SUPPORT_API_KEY=your-api-key-here
+```
+
 #### Step 4 — Update All Three Registries
 
-**`src/config/encryption-registry.js`:**
+**`src/config/encryption-registry.js`** (uses secret key references):
 ```js
-const SUPPORT_ENDPOINT = env.SUPPORT_API_ENDPOINT;
-const SUPPORT_HOST = env.ALLOWED_SUPPORT_HOSTS;
-
-// In the exported array:
 {
   wrapperField: 'encryptedCreateTicket',
   operationType: 'Mutation',
   requestMode: 'encrypted',
   responseEncryption: 'always',
   source: {
-    endpoint: SUPPORT_ENDPOINT,
-    allowedHosts: SUPPORT_HOST,
-    mode: 'rest-json'       // ← Required for REST sources
-  }
-}
-```
-
-**`src/resolvers/encrypted-operations.js`:**
-```js
-const SUPPORT_ENDPOINT = '{{SUPPORT_API_ENDPOINT}}';
-const SUPPORT_HOST = '{{ALLOWED_SUPPORT_HOSTS}}';
-const SUPPORT_API_KEY = '{{SUPPORT_API_KEY}}';
-
-// In the registry array:
-{
-  wrapperField: 'encryptedCreateTicket',
-  operationType: 'Mutation',
-  requestMode: 'encrypted',
-  responseEncryption: 'always',
-  source: {
-    endpoint: SUPPORT_ENDPOINT,
-    allowedHosts: SUPPORT_HOST,
+    endpointKey: 'SUPPORT_API_ENDPOINT',
+    allowedHostsKey: 'ALLOWED_SUPPORT_HOSTS',
     mode: 'rest-json',
-    bearerToken: SUPPORT_API_KEY   // ← injected at build time
+    bearerTokenKey: 'SUPPORT_API_KEY'
   }
 }
 ```
 
-**`src/hooks/before-all.js`:**
+**`src/resolvers/encrypted-operations.js`** (same key references — resolver reads values from `context.secrets`):
+```js
+{
+  wrapperField: 'encryptedCreateTicket',
+  operationType: 'Mutation',
+  requestMode: 'encrypted',
+  responseEncryption: 'always',
+  source: {
+    endpointKey: 'SUPPORT_API_ENDPOINT',
+    allowedHostsKey: 'ALLOWED_SUPPORT_HOSTS',
+    mode: 'rest-json',
+    bearerTokenKey: 'SUPPORT_API_KEY'
+  }
+}
+```
+
+**`src/hooks/before-all.js`** (minimal — no source info):
 ```js
 {
   wrapperField: 'encryptedCreateTicket',
@@ -456,8 +493,8 @@ When adding or modifying operations, **all three** inline registries must be upd
 
 | File | Purpose | Required Fields |
 |------|---------|-----------------|
-| `src/config/encryption-registry.js` | Build-time source of truth | All fields (wrapperField, operationType, requestMode, responseEncryption, source) |
-| `src/resolvers/encrypted-operations.js` | Runtime resolver | All fields + `{{PLACEHOLDER}}` constants |
+| `src/config/encryption-registry.js` | Build-time source of truth | All fields (with `endpointKey` / `allowedHostsKey` key references) |
+| `src/resolvers/encrypted-operations.js` | Runtime resolver | All fields (same key references, reads `context.secrets` at runtime) |
 | `src/hooks/before-all.js` | Request validation | Minimal: wrapperField, requestMode, responseEncryption |
 
 > The `src/config/type-defs.js` reads from `encryption-registry.js` automatically — no manual sync needed there.
@@ -469,14 +506,15 @@ When adding or modifying operations, **all three** inline registries must be upd
 ### Runtime (Cloudflare Workers / API Mesh)
 - **No `require()`, `import`, `window`, `eval`, or Node built-ins** in hook and resolver files — the API Mesh linter rejects them
 - **No `new Function()`** — Ajv JSON Schema compilation fails (this is why OpenAPI schemas must use `"type": "string"`)
-- **No `process.env` or `context.secrets`** — all configuration is injected at build time via `{{PLACEHOLDER}}`
+- **Secrets via `context.secrets`** — Resolver reads all runtime secrets from `context.secrets`, populated by `--secrets` flag
+- **Handler endpoints via `{{env.X}}`** — Resolved by AIO CLI from `--env .env` at run/deploy time
 - **Use `globalThis.fetch`** instead of `global.fetch`
 - **Use Web Crypto API** (`crypto.subtle`) — not Node.js `crypto` module
 
 ### Build Time (Node.js)
 - Uses Node.js `webcrypto` (`require('crypto').webcrypto`) in CLI scripts
-- `{{PLACEHOLDER}}` tokens in source files are replaced by `scripts/build-mesh.js`
-- Built artifacts go to `mesh-artifact/` and `mesh/mesh.json`
+- Build generates `mesh.json` at project root with `{{env.X}}` handler placeholders
+- No secrets are read or embedded during build — just type defs and template generation
 
 ### OpenAPI Schemas
 - **Must use `"type": "string"` for all request/response schemas**
@@ -511,9 +549,10 @@ When adding or modifying operations, **all three** inline registries must be upd
 | `npm run encrypt -- "<text>"` | Encrypt a raw string | Any string | Base64 envelope |
 | `npm run decrypt -- "<envelope>"` | Decrypt an envelope | Base64 envelope | Plaintext string |
 | `npm run decrypt:response -- "<envelope>"` | Decrypt a response | Base64 envelope | Formatted JSON |
-| `npm run build:mesh` | Build mesh.json | — | mesh/mesh.json + mesh-artifact/ |
+| `npm run build:mesh` | Build mesh.json | — | mesh.json at project root |
 | `npm run validate` | Validate config | — | Pass/fail report |
-| `npm run start:mesh` | Start mesh locally | — | Server on localhost |
+| `npm run validate:workflows` | Validate CI/CD | — | Pass/fail report |
+| `npm run start:mesh -- --port 5001` | Start mesh locally | — | Server on localhost |
 | `npm test` | Run unit tests | — | Test results |
 
 ---
@@ -525,7 +564,7 @@ When adding or modifying operations, **all three** inline registries must be upd
 | `Error compiling schema, function code...` | OpenAPI schema has complex types | Simplify to `"type": "string"` in the OpenAPI JSON |
 | `Cannot return null for non-nullable field` | Missing registry entry in resolver or hook | Add the operation to all 3 registries and rebuild |
 | `The upstream service is currently unavailable` | Wrong endpoint, missing auth, or network error | Check secrets YAML, verify endpoint URL, check bearer token |
-| `Failed to process the encrypted request` | Wrong passphrase or corrupted envelope | Verify `MESH_AES_PASSPHRASE` matches between encrypt and mesh |
-| `Unresolved placeholder {{...}}` | Missing secret in YAML file | Add the key to `mesh/stage-secrets.yaml` |
+| `Failed to process the encrypted request` | Wrong passphrase or corrupted envelope | Verify `MESH_AES_PASSPHRASE` matches between encrypt and mesh secrets |
+| `Source endpoint host is not allowed` | Endpoint host not in allowlist | Check `ALLOWED_*_HOSTS` in secrets YAML |
 | `Address already in use` | Port conflict | Use `--port 5002` or kill the existing process |
 | `No leads in the request` | Sending GraphQL format to REST endpoint | Use `npm run encrypt:rest-payload` (not `encrypt:payload`) for REST sources |

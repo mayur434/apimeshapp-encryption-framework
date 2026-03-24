@@ -65,7 +65,8 @@ module.exports = [
     responseEncryption: 'always',
     source: {
       endpoint: SFDC_ENDPOINT,
-      allowedHosts: SFDC_HOST
+      allowedHosts: SFDC_HOST,
+      mode: 'rest-json'
     }
   }
 

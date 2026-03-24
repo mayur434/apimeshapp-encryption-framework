@@ -20,6 +20,7 @@ const COMMERCE_ENDPOINT = '{{COMMERCE_GRAPHQL_ENDPOINT}}';
 const COMMERCE_HOST = '{{ALLOWED_COMMERCE_HOSTS}}';
 const SFDC_ENDPOINT = '{{SFDC_ENDPOINT}}';
 const SFDC_HOST = '{{ALLOWED_SFDC_HOSTS}}';
+const SFDC_BEARER_TOKEN = '{{SF_BEARER_TOKEN}}';
 
 // Registry: maps each wrapper field to its upstream source.
 // The client supplies the full GraphQL query inside the payload.
@@ -43,7 +44,7 @@ const registry = [
     operationType: 'Mutation',
     requestMode: 'encrypted',
     responseEncryption: 'always',
-    source: { endpoint: SFDC_ENDPOINT, allowedHosts: SFDC_HOST }
+    source: { endpoint: SFDC_ENDPOINT, allowedHosts: SFDC_HOST, mode: 'rest-json', bearerToken: SFDC_BEARER_TOKEN }
   }
 ];
 
@@ -76,6 +77,58 @@ async function executeSourceGraphQL(input) {
   var duration = Date.now() - startTime;
   console.log('[encrypted-ops] upstream_call status=' + response.status + ' ok=' + response.ok + ' duration=' + duration + 'ms' + (json.errors ? ' errors=' + json.errors.length : ''));
   return { ok: response.ok, status: response.status, json };
+}
+
+async function executeSourceRestJson(input) {
+  var fetchFn = input.fetchImpl || (typeof globalThis !== 'undefined' && globalThis.fetch) || (typeof global !== 'undefined' && global.fetch);
+  if (typeof fetchFn !== 'function') {
+    throw new Error('fetch is not available in this runtime.');
+  }
+  var safeEndpoint = assertAllowedHost(input.endpoint, input.allowedHosts);
+  var startTime = Date.now();
+  var headers = { 'content-type': 'application/json' };
+  if (input.authorizationHeader) headers['authorization'] = input.authorizationHeader;
+  var response = await fetchFn(safeEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(input.body)
+  });
+  var json;
+  try {
+    json = await response.json();
+  } catch (_e) {
+    json = { rawText: await response.text() };
+  }
+  var duration = Date.now() - startTime;
+  console.log('[encrypted-ops] upstream_rest_call status=' + response.status + ' ok=' + response.ok + ' duration=' + duration + 'ms');
+  return { ok: response.ok, status: response.status, json };
+}
+
+/**
+ * Extract REST body from a wrapper payload.
+ * Accepts three payload shapes:
+ *   1. { body: { ... } }           — direct REST body (recommended)
+ *   2. { query, variables: { input: { ... } } } — GraphQL format with variables.input as body
+ *   3. { query, variables: { ... } }             — GraphQL format with non-empty variables as body
+ */
+function extractRestBody(payload) {
+  // Shape 1: explicit body key
+  if (payload.body && typeof payload.body === 'object' && !Array.isArray(payload.body)) {
+    return payload.body;
+  }
+  // Shape 2/3: GraphQL-style with variables
+  if (payload.variables && typeof payload.variables === 'object') {
+    // If variables.input exists, use it (common GraphQL pattern)
+    if (payload.variables.input && typeof payload.variables.input === 'object') {
+      return payload.variables.input;
+    }
+    // If variables has own keys (not empty), use the whole object
+    var varKeys = Object.keys(payload.variables);
+    if (varKeys.length > 0) {
+      return payload.variables;
+    }
+  }
+  return null;
 }
 
 function toBase64(bytes) {
@@ -203,9 +256,6 @@ async function parseWrapperPayload(input, passPhrase) {
   if (!parsed || typeof parsed !== 'object') {
     throw new Error('Wrapper payload must decode to a JSON object.');
   }
-  if (!parsed.query || typeof parsed.query !== 'string' || !parsed.query.trim()) {
-    throw new Error('Wrapper payload must contain a "query" field with the GraphQL document.');
-  }
   return parsed;
 }
 
@@ -231,6 +281,7 @@ async function resolveEncryptedOperation(fieldName, args, context) {
     // Endpoint and allowed hosts come from the registry entry — each source is self-contained.
     const endpoint = registration.source && registration.source.endpoint;
     const allowedHosts = registration.source && registration.source.allowedHosts;
+    const sourceMode = (registration.source && registration.source.mode) || 'graphql';
     if (!endpoint) {
       console.error('[encrypted-ops] error field=' + fieldName + ' reason=no_endpoint');
       throw new Error('The requested operation is not available.');
@@ -248,14 +299,33 @@ async function resolveEncryptedOperation(fieldName, args, context) {
 
     var sourceResult;
     try {
-      // query and variables come from the client payload — no hardcoded document.
-      sourceResult = await executeSourceGraphQL({
-        endpoint,
-        allowedHosts,
-        document: wrapperPayload.query,
-        variables: wrapperPayload.variables || {},
-        fetchImpl: (context && context.fetch) || (typeof globalThis !== 'undefined' && globalThis.fetch) || (typeof global !== 'undefined' && global.fetch)
-      });
+      if (sourceMode === 'rest-json') {
+        var restBody = extractRestBody(wrapperPayload);
+        if (!restBody) {
+          throw new Error('REST payload must contain a "body" object, or GraphQL variables with data. Use: npm run encrypt:rest-payload -- \'{"key":"value"}\'');
+        }
+        console.log('[encrypted-ops] rest_body_extracted keys=' + Object.keys(restBody).join(','));
+        var bearerToken = registration.source && registration.source.bearerToken;
+        var authHeader = bearerToken ? ('Bearer ' + bearerToken) : (context && context.headers && context.headers.authorization);
+        sourceResult = await executeSourceRestJson({
+          endpoint,
+          allowedHosts,
+          body: restBody,
+          authorizationHeader: authHeader,
+          fetchImpl: (context && context.fetch) || (typeof globalThis !== 'undefined' && globalThis.fetch) || (typeof global !== 'undefined' && global.fetch)
+        });
+      } else {
+        if (!wrapperPayload.query || typeof wrapperPayload.query !== 'string' || !wrapperPayload.query.trim()) {
+          throw new Error('Wrapper payload must contain a "query" field with the GraphQL document.');
+        }
+        sourceResult = await executeSourceGraphQL({
+          endpoint,
+          allowedHosts,
+          document: wrapperPayload.query,
+          variables: wrapperPayload.variables || {},
+          fetchImpl: (context && context.fetch) || (typeof globalThis !== 'undefined' && globalThis.fetch) || (typeof global !== 'undefined' && global.fetch)
+        });
+      }
     } catch (upstreamErr) {
       console.error('[encrypted-ops] error field=' + fieldName + ' stage=upstream reason=' + upstreamErr.message);
       throw new Error('The upstream service is currently unavailable. Please try again later.');

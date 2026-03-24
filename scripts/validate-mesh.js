@@ -17,7 +17,8 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const MESH_PATH = path.join(ROOT, 'mesh', 'mesh.json');
-const REQUIRED_SECRETS = ['MESH_AES_PASSPHRASE', 'COMMERCE_GRAPHQL_ENDPOINT', 'ALLOWED_COMMERCE_HOSTS'];
+const RESOLVED_MESH_PATH = path.join(ROOT, 'mesh-artifact', 'mesh.json');
+const REQUIRED_SECRETS = ['MESH_AES_PASSPHRASE', 'COMMERCE_GRAPHQL_ENDPOINT', 'ALLOWED_COMMERCE_HOSTS', 'SFDC_ENDPOINT', 'ALLOWED_SFDC_HOSTS', 'SF_BEARER_TOKEN'];
 const SECRET_FILES = ['mesh/prod-secrets.yaml', 'mesh/stage-secrets.yaml'];
 
 let errors = 0;
@@ -57,6 +58,13 @@ if (mesh) {
     const src = mesh.meshConfig.sources[0];
     if (!src.handler || !src.handler.graphql || !src.handler.graphql.endpoint) {
       throw new Error('first source must have handler.graphql.endpoint');
+    }
+  });
+
+  check('SalesforceLeadAPI source has openapi handler', () => {
+    const sfdc = mesh.meshConfig.sources.find(s => s.name === 'SalesforceLeadAPI');
+    if (!sfdc || !sfdc.handler || !sfdc.handler.openapi || !sfdc.handler.openapi.source) {
+      throw new Error('SalesforceLeadAPI source must have handler.openapi.source');
     }
   });
 

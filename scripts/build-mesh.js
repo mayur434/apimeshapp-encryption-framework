@@ -1,22 +1,24 @@
 const fs = require('fs');
 const path = require('path');
-const { loadEnv } = require('./env-loader');
-
-const env = loadEnv();
 
 const { buildAdditionalTypeDefs } = require('../src/config/type-defs');
 
 const rootDir = path.join(__dirname, '..');
-const outputPath = path.join(rootDir, 'mesh', 'mesh.json');
-
-const embeddedFiles = [
-  'src/hooks/before-all.js',
-  'src/resolvers/encrypted-operations.js'
-];
+const outputPath = path.join(rootDir, 'mesh.json');
 
 /**
  * Mesh config template.
- * {{PLACEHOLDER}} tokens are resolved at build time from mesh/*-secrets.yaml.
+ *
+ * Handler endpoints use {{env.X}} — interpolated by the AIO CLI at run/deploy
+ * time from the --env file. Resolver secrets are accessed via context.secrets
+ * (populated by the --secrets flag). No build-time secret interpolation needed.
+ *
+ * Source files are NOT embedded — the CLI reads them from disk using the
+ * referenced paths in additionalResolvers and plugins.hooks.
+ *
+ * Usage:
+ *   npm run build:mesh                     # Generate mesh/mesh.json
+ *   aio api-mesh run mesh/mesh.json --env .env --secrets mesh/stage-secrets.yaml
  */
 function getMeshTemplate() {
   return {
@@ -26,7 +28,7 @@ function getMeshTemplate() {
           name: 'AdobeCommerce',
           handler: {
             graphql: {
-              endpoint: '{{COMMERCE_GRAPHQL_ENDPOINT}}',
+              endpoint: '{{env.COMMERCE_GRAPHQL_ENDPOINT}}',
               operationHeaders: {
                 'Content-Type': 'application/json'
               }
@@ -37,11 +39,11 @@ function getMeshTemplate() {
           name: 'SalesforceLeadAPI',
           handler: {
             openapi: {
-              source: './sfdc-openapi.json',
+              source: './mesh/sfdc-openapi.json',
               sourceFormat: 'json',
               operationHeaders: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer {{SF_BEARER_TOKEN}}'
+                'Authorization': 'Bearer {{env.SF_BEARER_TOKEN}}'
               }
             }
           }
@@ -60,51 +62,18 @@ function getMeshTemplate() {
       additionalTypeDefs: '',
       additionalResolvers: [
         './src/resolvers/encrypted-operations.js'
-      ],
-      files: []
+      ]
     }
   };
 }
 
-/**
- * Replace {{VAR_NAME}} placeholders in content with values from the env map.
- * Unresolved placeholders are left as-is (build will warn).
- */
-function interpolate(content, env) {
-  return content.replace(/\{\{([A-Z0-9_]+)\}\}/g, (match, key) => {
-    if (env[key] !== undefined) return env[key];
-    console.warn(`[build-mesh] Warning: placeholder {{env.${key}}} has no value — check mesh/prod-secrets.yaml`);
-    return match;
-  });
-}
-
 function main() {
-  // Build mesh from template, interpolating placeholders
-  const rawTemplate = JSON.stringify(getMeshTemplate());
-  const mesh = JSON.parse(interpolate(rawTemplate, env));
+  var mesh = getMeshTemplate();
   mesh.meshConfig.additionalTypeDefs = buildAdditionalTypeDefs();
 
-  // Write interpolated embedded files to mesh-artifact/ so the mesh runtime
-  // always reads resolved values (source files contain {{PLACEHOLDER}} tokens).
-  const artifactDir = path.join(rootDir, 'mesh-artifact');
-  mesh.meshConfig.files = embeddedFiles.map((relativePath) => {
-    const rawContent = fs.readFileSync(path.join(rootDir, relativePath), 'utf8');
-    const content = interpolate(rawContent, env);
-
-    const artifactFilePath = path.join(artifactDir, relativePath);
-    fs.mkdirSync(path.dirname(artifactFilePath), { recursive: true });
-    fs.writeFileSync(artifactFilePath, content);
-    console.log(`  Wrote ${artifactFilePath}`);
-
-    return { path: `./mesh-artifact/${relativePath}`, content };
-  });
-
-  // Point mesh config paths to the resolved files in mesh-artifact/
-  mesh.meshConfig.plugins[0].hooks.beforeAll.composer = './mesh-artifact/src/hooks/before-all.js#beforeAll';
-  mesh.meshConfig.additionalResolvers = ['./mesh-artifact/src/resolvers/encrypted-operations.js'];
-
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify(mesh, null, 2));
-  console.log(`Wrote ${outputPath}`);
+  console.log('Wrote ' + outputPath);
 }
 
 main();

@@ -32,6 +32,14 @@ jobs:
 
       - run: npm ci
 
+      - name: Build mesh
+        run: npm run build:mesh
+
+      - name: Validate mesh config
+        run: node scripts/validate-mesh.js
+        env:
+          CI: true
+
       - name: Validate source files
         run: |
           echo "Checking source files exist..."

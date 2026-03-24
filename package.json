@@ -5,7 +5,7 @@
   "description": "Zero-dependency encrypted operations framework for Adobe API Mesh — AES-CBC encrypted request/response envelopes for any GraphQL source",
   "scripts": {
     "build:mesh": "node ./scripts/build-mesh.js",
-    "start:mesh": "aio api-mesh run mesh/mesh.json --secrets mesh/stage-secrets.yaml",
+    "start:mesh": "aio api-mesh run mesh.json --env .env --secrets mesh/stage-secrets.yaml",
     "encrypt": "node ./scripts/encrypt-value.js",
     "encrypt:payload": "node ./scripts/encrypt-payload.js",
     "encrypt:rest-payload": "node ./scripts/encrypt-rest-payload.js",

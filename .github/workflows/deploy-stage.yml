@@ -17,26 +17,12 @@ jobs:
 
       - run: npm ci
 
-      - name: Build mesh
-        run: npm run build:mesh
-        env:
-          MESH_AES_PASSPHRASE: ${{ secrets.MESH_AES_PASSPHRASE_STAGE }}
-          COMMERCE_GRAPHQL_ENDPOINT: ${{ secrets.COMMERCE_GRAPHQL_ENDPOINT_STAGE }}
-          ALLOWED_COMMERCE_HOSTS: ${{ secrets.ALLOWED_COMMERCE_HOSTS_STAGE }}
-          SF_BEARER_TOKEN: ${{ secrets.SF_BEARER_TOKEN_STAGE }}
-          SFDC_ENDPOINT: ${{ secrets.SFDC_ENDPOINT_STAGE }}
-          ALLOWED_SFDC_HOSTS: ${{ secrets.ALLOWED_SFDC_HOSTS_STAGE }}
-
-      - name: Validate mesh config
-        run: node scripts/validate-mesh.js
-        env:
-          CI: true
-          MESH_AES_PASSPHRASE: ${{ secrets.MESH_AES_PASSPHRASE_STAGE }}
-          COMMERCE_GRAPHQL_ENDPOINT: ${{ secrets.COMMERCE_GRAPHQL_ENDPOINT_STAGE }}
-          ALLOWED_COMMERCE_HOSTS: ${{ secrets.ALLOWED_COMMERCE_HOSTS_STAGE }}
-          SF_BEARER_TOKEN: ${{ secrets.SF_BEARER_TOKEN_STAGE }}
-          SFDC_ENDPOINT: ${{ secrets.SFDC_ENDPOINT_STAGE }}
-          ALLOWED_SFDC_HOSTS: ${{ secrets.ALLOWED_SFDC_HOSTS_STAGE }}
+      - name: Validate source files
+        run: |
+          test -f src/hooks/before-all.js
+          test -f src/resolvers/encrypted-operations.js
+          test -f src/config/encryption-registry.js
+          echo "All source files present."
 
       - name: Run tests
         run: npm test
@@ -67,13 +53,24 @@ jobs:
 
       - name: Build mesh
         run: npm run build:mesh
-        env:
+
+      - name: Create env file
+        run: |
+          cat > .env <<EOF
+          COMMERCE_GRAPHQL_ENDPOINT=${{ secrets.COMMERCE_GRAPHQL_ENDPOINT_STAGE }}
+          SF_BEARER_TOKEN=${{ secrets.SF_BEARER_TOKEN_STAGE }}
+          EOF
+
+      - name: Create secrets file
+        run: |
+          cat > mesh/stage-secrets.yaml <<EOF
           MESH_AES_PASSPHRASE: ${{ secrets.MESH_AES_PASSPHRASE_STAGE }}
           COMMERCE_GRAPHQL_ENDPOINT: ${{ secrets.COMMERCE_GRAPHQL_ENDPOINT_STAGE }}
           ALLOWED_COMMERCE_HOSTS: ${{ secrets.ALLOWED_COMMERCE_HOSTS_STAGE }}
           SF_BEARER_TOKEN: ${{ secrets.SF_BEARER_TOKEN_STAGE }}
           SFDC_ENDPOINT: ${{ secrets.SFDC_ENDPOINT_STAGE }}
           ALLOWED_SFDC_HOSTS: ${{ secrets.ALLOWED_SFDC_HOSTS_STAGE }}
+          EOF
 
       - name: Deploy mesh
-        run: aio api-mesh update mesh/mesh.json
+        run: aio api-mesh update mesh.json --env .env --secrets mesh/stage-secrets.yaml

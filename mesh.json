@@ -1,0 +1,44 @@
+{
+  "meshConfig": {
+    "sources": [
+      {
+        "name": "AdobeCommerce",
+        "handler": {
+          "graphql": {
+            "endpoint": "{{env.COMMERCE_GRAPHQL_ENDPOINT}}",
+            "operationHeaders": {
+              "Content-Type": "application/json"
+            }
+          }
+        }
+      },
+      {
+        "name": "SalesforceLeadAPI",
+        "handler": {
+          "openapi": {
+            "source": "./mesh/sfdc-openapi.json",
+            "sourceFormat": "json",
+            "operationHeaders": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{env.SF_BEARER_TOKEN}}"
+            }
+          }
+        }
+      }
+    ],
+    "plugins": [
+      {
+        "hooks": {
+          "beforeAll": {
+            "composer": "./src/hooks/before-all.js#beforeAll",
+            "blocking": true
+          }
+        }
+      }
+    ],
+    "additionalTypeDefs": "input EncryptedOperationInput {\n  encrypted: Boolean!\n  payload: String!\n}\ntype EncryptedOperationResult {\n  encrypted: Boolean!\n  operationName: String!\n  payload: String!\n}\n\ntype Mutation {\n  encryptedCreateCustomer(input: EncryptedOperationInput!): EncryptedOperationResult!\n  encryptedGenerateCustomerToken(input: EncryptedOperationInput!): EncryptedOperationResult!\n  encryptedCreateLead(input: EncryptedOperationInput!): EncryptedOperationResult!\n}",
+    "additionalResolvers": [
+      "./src/resolvers/encrypted-operations.js"
+    ]
+  }
+}

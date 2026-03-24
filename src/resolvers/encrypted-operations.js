@@ -5,46 +5,36 @@
  * in the registry (encryption-registry.js) is handled here automatically.
  * To add a new source, only the registry needs to be updated.
  *
- * Constants below use mustache-style placeholder syntax. They are replaced with real
- * values from secrets.yaml at build time by scripts/build-mesh.js.
- * The built artifact (mesh/mesh.json) contains no placeholders.
+ * All secrets are read at runtime via context.secrets (populated by --secrets flag).
  */
 
-const DEFAULT_PASS_PHRASE = '{{MESH_AES_PASSPHRASE}}';
 const DEFAULT_KEY_SIZE = 128;
 const DEFAULT_ITERATION_COUNT = 10000;
 
 // Registry is inlined here (mesh linter does not allow require/import).
 // Keep this in sync with src/config/encryption-registry.js.
-const COMMERCE_ENDPOINT = '{{COMMERCE_GRAPHQL_ENDPOINT}}';
-const COMMERCE_HOST = '{{ALLOWED_COMMERCE_HOSTS}}';
-const SFDC_ENDPOINT = '{{SFDC_ENDPOINT}}';
-const SFDC_HOST = '{{ALLOWED_SFDC_HOSTS}}';
-const SFDC_BEARER_TOKEN = '{{SF_BEARER_TOKEN}}';
-
-// Registry: maps each wrapper field to its upstream source.
-// The client supplies the full GraphQL query inside the payload.
+// Secret key names reference context.secrets keys — NOT actual values.
 const registry = [
   {
     wrapperField: 'encryptedCreateCustomer',
     operationType: 'Mutation',
     requestMode: 'encrypted',
     responseEncryption: 'always',
-    source: { endpoint: COMMERCE_ENDPOINT, allowedHosts: COMMERCE_HOST }
+    source: { endpointKey: 'COMMERCE_GRAPHQL_ENDPOINT', allowedHostsKey: 'ALLOWED_COMMERCE_HOSTS' }
   },
   {
     wrapperField: 'encryptedGenerateCustomerToken',
     operationType: 'Mutation',
     requestMode: 'encrypted',
     responseEncryption: 'always',
-    source: { endpoint: COMMERCE_ENDPOINT, allowedHosts: COMMERCE_HOST }
+    source: { endpointKey: 'COMMERCE_GRAPHQL_ENDPOINT', allowedHostsKey: 'ALLOWED_COMMERCE_HOSTS' }
   },
   {
     wrapperField: 'encryptedCreateLead',
     operationType: 'Mutation',
     requestMode: 'encrypted',
     responseEncryption: 'always',
-    source: { endpoint: SFDC_ENDPOINT, allowedHosts: SFDC_HOST, mode: 'rest-json', bearerToken: SFDC_BEARER_TOKEN }
+    source: { endpointKey: 'SFDC_ENDPOINT', allowedHostsKey: 'ALLOWED_SFDC_HOSTS', mode: 'rest-json', bearerTokenKey: 'SF_BEARER_TOKEN' }
   }
 ];
 
@@ -276,14 +266,22 @@ async function resolveEncryptedOperation(fieldName, args, context) {
       throw new Error('The requested operation is not available.');
     }
 
-    const passPhrase = DEFAULT_PASS_PHRASE;
+    // Read secrets from context.secrets (populated by --secrets flag at deploy/run time)
+    var secrets = (context && context.secrets) || {};
+    var passPhrase = secrets.MESH_AES_PASSPHRASE;
+    if (!passPhrase) {
+      console.error('[encrypted-ops] error field=' + fieldName + ' reason=missing_passphrase');
+      throw new Error('The requested operation is not available.');
+    }
 
-    // Endpoint and allowed hosts come from the registry entry — each source is self-contained.
-    const endpoint = registration.source && registration.source.endpoint;
-    const allowedHosts = registration.source && registration.source.allowedHosts;
+    // Endpoint and allowed hosts are resolved from context.secrets via key references
+    var endpointKey = registration.source && registration.source.endpointKey;
+    var allowedHostsKey = registration.source && registration.source.allowedHostsKey;
+    var endpoint = endpointKey && secrets[endpointKey];
+    var allowedHosts = allowedHostsKey && secrets[allowedHostsKey];
     const sourceMode = (registration.source && registration.source.mode) || 'graphql';
     if (!endpoint) {
-      console.error('[encrypted-ops] error field=' + fieldName + ' reason=no_endpoint');
+      console.error('[encrypted-ops] error field=' + fieldName + ' reason=no_endpoint key=' + endpointKey);
       throw new Error('The requested operation is not available.');
     }
 
@@ -305,7 +303,8 @@ async function resolveEncryptedOperation(fieldName, args, context) {
           throw new Error('REST payload must contain a "body" object, or GraphQL variables with data. Use: npm run encrypt:rest-payload -- \'{"key":"value"}\'');
         }
         console.log('[encrypted-ops] rest_body_extracted keys=' + Object.keys(restBody).join(','));
-        var bearerToken = registration.source && registration.source.bearerToken;
+        var bearerTokenKey = registration.source && registration.source.bearerTokenKey;
+        var bearerToken = bearerTokenKey && secrets[bearerTokenKey];
         var authHeader = bearerToken ? ('Bearer ' + bearerToken) : (context && context.headers && context.headers.authorization);
         sourceResult = await executeSourceRestJson({
           endpoint,

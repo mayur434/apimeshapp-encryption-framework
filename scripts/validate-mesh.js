@@ -16,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const MESH_PATH = path.join(ROOT, 'mesh', 'mesh.json');
+const MESH_PATH = path.join(ROOT, 'mesh.json');
 const REQUIRED_SECRETS = ['MESH_AES_PASSPHRASE', 'COMMERCE_GRAPHQL_ENDPOINT', 'ALLOWED_COMMERCE_HOSTS', 'SFDC_ENDPOINT', 'ALLOWED_SFDC_HOSTS', 'SF_BEARER_TOKEN'];
 const SECRET_FILES = ['mesh/prod-secrets.yaml', 'mesh/stage-secrets.yaml'];
 
@@ -37,14 +37,14 @@ console.log('Mesh config validation\n');
 
 // ── mesh.json ───────────────────────────────────────────────────────────────
 
-check('mesh/mesh.json exists', () => {
+check('mesh.json exists', () => {
   if (!fs.existsSync(MESH_PATH)) {
-    throw new Error('File not found: mesh/mesh.json — run "npm run build:mesh" first');
+    throw new Error('File not found: mesh.json — run "npm run build:mesh" first');
   }
 });
 
 let mesh;
-check('mesh/mesh.json is valid JSON', () => {
+check('mesh.json is valid JSON', () => {
   mesh = JSON.parse(fs.readFileSync(MESH_PATH, 'utf8'));
 });
 
@@ -59,6 +59,10 @@ if (mesh) {
     const src = mesh.meshConfig.sources[0];
     if (!src.handler || !src.handler.graphql || !src.handler.graphql.endpoint) {
       throw new Error('first source must have handler.graphql.endpoint');
+    }
+    const ep = src.handler.graphql.endpoint;
+    if (!ep.startsWith('http') && !ep.includes('context.secrets.') && !ep.startsWith('{{')) {
+      throw new Error('endpoint must be a URL, {{PLACEHOLDER}}, or {context.secrets.X} reference');
     }
   });
 
@@ -82,36 +86,27 @@ if (mesh) {
     }
   });
 
-  // Check that referenced hook/resolver files exist.
-  // After build, paths point to mesh-artifact/; before build, check the source files too.
-  function assertFileOrSource(filePath) {
-    const fullPath = path.join(ROOT, filePath.replace(/^\.\//, ''));
-    if (fs.existsSync(fullPath)) return;
-    // Fall back to the source file (mesh-artifact/src/... → src/...)
-    const sourcePath = filePath.replace('mesh-artifact/', '');
-    const sourceFullPath = path.join(ROOT, sourcePath.replace(/^\.\//, ''));
-    if (fs.existsSync(sourceFullPath)) return;
-    throw new Error(`File not found: ${filePath}`);
-  }
-
+  // Check that referenced hook/resolver files exist on disk
   const hookComposer = ((mesh.meshConfig.plugins || []).find(p => p.hooks) || {}).hooks;
   if (hookComposer && hookComposer.beforeAll && hookComposer.beforeAll.composer) {
     const hookFile = hookComposer.beforeAll.composer.split('#')[0];
     check(`hook file exists: ${hookFile}`, () => {
-      assertFileOrSource(hookFile);
+      const fullPath = path.join(ROOT, hookFile.replace(/^\.\//, ''));
+      if (!fs.existsSync(fullPath)) throw new Error(`File not found: ${hookFile}`);
     });
   }
 
   for (const resolverPath of mesh.meshConfig.additionalResolvers || []) {
     check(`resolver file exists: ${resolverPath}`, () => {
-      assertFileOrSource(resolverPath);
+      const fullPath = path.join(ROOT, resolverPath.replace(/^\.\//, ''));
+      if (!fs.existsSync(fullPath)) throw new Error(`File not found: ${resolverPath}`);
     });
   }
 }
 
 // ── Secrets files ───────────────────────────────────────────────────────────
 
-// ── Secrets: check YAML files locally, fall back to env vars in CI ──────────
+// ── Secrets files (local only — CI passes secrets via --secrets flag) ────────
 
 const isCI = !!process.env.CI;
 
@@ -128,21 +123,12 @@ for (const secretFile of SECRET_FILES) {
       }
     });
   } else if (isCI) {
-    check(`${secretFile} (skipped in CI — using env vars)`, () => {});
+    check(`${secretFile} (skipped in CI — secrets passed via --secrets flag)`, () => {});
   } else {
     check(`${secretFile} exists`, () => {
       throw new Error(`File not found: ${secretFile}`);
     });
   }
-}
-
-if (isCI) {
-  check('required secrets available as env vars', () => {
-    const missing = REQUIRED_SECRETS.filter(key => !process.env[key]);
-    if (missing.length > 0) {
-      throw new Error(`Missing env vars: ${missing.join(', ')}`);
-    }
-  });
 }
 
 // ── Result ──────────────────────────────────────────────────────────────────
